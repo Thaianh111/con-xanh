@@ -36,3 +36,12 @@ Chốt ngày 13/11/2026 với anh Võ Thái Anh. Hướng game: **quản lý là
 - [ ] Chọn cách kiếm tiền (bán một lần hoặc miễn phí + quảng cáo nhẹ)
 
 Mỗi GĐ: `/sprint-plan` để chia việc, `/playtest-report` cuối GĐ.
+
+## Ghi chú 13/11/2026 – tạm dừng sau GĐ3 đợt 2
+Anh chơi thử thấy game **còn nhạt**. Lý do em ghi lại: chưa có quyết định/thử thách, chưa có bất ngờ, thu hoạch tự động không đã tay, dân chưa có tính cách.
+Gia vị đã đề xuất (anh chưa chọn – hỏi lại khi quay về):
+- [ ] Chạm để gặt: icon chín nổi lên, chạm hái, tiếng + hạt bay
+- [ ] Dân nhờ việc: mỗi người một tính cách, việc nhỏ kiểu miền Tây, có thưởng
+- [ ] Sự kiện bất ngờ: đám giỗ, lễ hội, cá lóc bự, ghe hàng hiếm, bão
+- [ ] Thử thách nước nổi: ngập ruộng, đắp bờ, nâng nền, trữ lúa
+Chưa kiểm tận mắt: mưa, nước nổi (từ ngày 6), cầu vồng. Sau đó: đợt 3 – build APK thử trên RedMagic.
