@@ -42,10 +42,12 @@ namespace ConXanh
             BuildWater();
             pack = Resources.Load<GameObject>("Models/thien_nhien_pack");
             builder = gameObject.AddComponent<Builder>();
-            Populate();
             gameObject.AddComponent<DayNight>().Init(sun);
+            gameObject.AddComponent<Economy>();
+            gameObject.AddComponent<Weather>().Init(sun);
             gameObject.AddComponent<Sound>();
             gameObject.AddComponent<GameUI>();
+            gameObject.AddComponent<SaveLoad>();
         }
 
         // ---------- camera / light / post ----------
@@ -186,14 +188,14 @@ namespace ConXanh
 
         public bool Walkable(Vector3 p)
         {
-            if (island.HeightAt(p.x, p.z) < 0.12f) return false;
+            if (island.HeightAt(p.x, p.z) < 0.12f + Weather.Flood) return false;
             foreach (var o in obstacles) if ((new Vector2(o.p.x - p.x, o.p.z - p.z)).sqrMagnitude < o.r * o.r) return false;
             return true;
         }
 
-        Vector3 Ground(float x, float z) => new Vector3(x, island.HeightAt(x, z), z);
+        public Vector3 Ground(float x, float z) => new Vector3(x, island.HeightAt(x, z), z);
 
-        Vector3 ShorePoint(float angle, float extra)
+        public Vector3 ShorePoint(float angle, float extra)
         {
             for (float r = 4; r < 11; r += 0.1f)
             {
@@ -204,83 +206,79 @@ namespace ConXanh
         }
 
         // ---------- village ----------
-        void Populate()
+        public Walker lead; GameObject dog;
+        readonly List<Walker> villagers = new List<Walker>();
+        static readonly string[] PeopleModels = { "nguoi_nam", "nguoi_nu", "nguoi_nu_2", "nguoi_nam_2" };
+
+        /// <summary>Fresh start: one nhà lá, a lu, bamboo and some greenery – the player builds the rest.</summary>
+        public void NewVillage()
         {
             Random.InitState(42);
-            // buildings (same layout spirit as the web prototype)
-            Spawn("nha_la", Ground(2.4f, -1.4f), 200, 1, 0.8f);
-            Spawn("nha_ngoi", Ground(-1.6f, -2.6f), 160, 1, 0.9f);
-            Spawn("dinh", Ground(-0.6f, 1.0f), 180, 1, 1.2f);
-            Spawn("chua", Ground(-3.9f, 0.6f), 120, 1, 1.2f);
-            Spawn("truong", Ground(1.0f, -3.9f), 190, 1, 1.1f);
-            Spawn("cho", Ground(2.0f, 1.3f), 150, 1, 1.0f);
-            Spawn("lo_keo", Ground(3.8f, 0.4f), 230, 1, 0.7f);
-            Spawn("vuon_rau", Ground(-3.4f, -2.0f), 140, 1, 0.9f);
-            var field = Spawn("ruong", Ground(0.6f, 3.6f), 180, 1, 1.4f);
-            Spawn("lu_nuoc", Ground(1.5f, -0.8f), 0, 1, 0.12f);
-            for (int k = 0; k < 2; k++) Spawn("bui_tre_" + (k + 1), Ground(-5.0f + k * 0.6f, -0.9f + k * 0.5f), Random.Range(0, 360f), 1, 0.3f);
-            for (int k = 0; k < 4; k++) { float a = 2.0f + k * 0.5f; Spawn("chuoi_" + (k % 2 + 1), Ground(Mathf.Cos(a) * 4.6f, Mathf.Sin(a) * 4.6f), Random.Range(0, 360f), 1, 0.2f); }
-
-            // fishery on the shore, facing the sea
-            float fa = -0.9f; var shore = ShorePoint(fa, -0.9f);
-            Spawn("ben_ca", Ground(shore.x, shore.z), Mathf.Atan2(Mathf.Cos(fa), Mathf.Sin(fa)) * Mathf.Rad2Deg, 1, 0.4f);
-
-            // palms + nipa around the beach, trees inland (Quaternius CC0)
-            for (int k = 0; k < 12; k++)
+            var b = builder;
+            b.Commit(b.defs["nha_la"], Ground(2.4f, -1.4f), 200, true);
+            b.Commit(b.defs["lu_nuoc"], Ground(1.5f, -0.6f), 0, true);
+            b.Commit(b.defs["bui_tre"], Ground(-4.6f, -0.8f), 30, true);
+            for (int k = 0; k < 10; k++)
             {
-                float a = k / 12f * Mathf.PI * 2 + Random.Range(-0.2f, 0.2f);
+                float a = k / 10f * Mathf.PI * 2 + Random.Range(-0.2f, 0.2f);
                 var p = ShorePoint(a, -1.3f - Random.Range(0, 0.4f));
-                if (k % 3 == 0) Spawn("dua_nuoc_" + (k % 2 + 1), Ground(p.x, p.z), Random.Range(0, 360f), 0.8f);
-                else SpawnPack("PalmTree_" + (k % 3 + 1), Ground(p.x, p.z), 0.4f);
+                b.Commit(b.defs[k % 3 == 0 ? "dua_nuoc" : "dua"], Ground(p.x, p.z), Random.Range(0, 360f), true);
             }
-            string[] trees = { "NormalTree_3", "PineTree_1", "MapleTree_1", "NormalTree_3" };
-            float[] tscale = { 0.34f, 0.4f, 0.26f, 0.3f };
-            for (int k = 0; k < 7; k++)
-            {
-                for (int tries = 0; tries < 20; tries++)
+            string[] deco = { "cay", "cay", "cay", "chuoi", "chuoi", "hoa", "hoa", "hoa" };
+            foreach (var d in deco)
+                for (int tries = 0; tries < 30; tries++)
                 {
-                    float a = Random.Range(0, Mathf.PI * 2), r = Random.Range(3.5f, 5.4f);
+                    float a = Random.Range(0, Mathf.PI * 2), r = Random.Range(2.5f, 5.4f);
                     var p = Ground(Mathf.Cos(a) * r, Mathf.Sin(a) * r);
                     if (!Walkable(p)) continue;
-                    var tree = SpawnPack(trees[k % 4], p, tscale[k % 4]); if (tree) Register(tree, 0.25f); break;
+                    b.Commit(b.defs[d], p, Random.Range(0, 360f), true); break;
                 }
-            }
-            for (int k = 0; k < 60; k++)
-            {
-                float a = Random.Range(0, Mathf.PI * 2), r = Random.Range(0.5f, 5.6f);
-                var p = Ground(Mathf.Cos(a) * r, Mathf.Sin(a) * r);
-                if (!Walkable(p)) continue;
-                SpawnPack(k % 3 == 0 ? "Flower_3_Clump" : k % 3 == 1 ? "Grass_Small" : "Flower_4_Clump", p, 0.35f);
-            }
-            for (int k = 0; k < 6; k++) { float a = Random.Range(0, Mathf.PI * 2); var p = Ground(Mathf.Cos(a) * 3.2f, Mathf.Sin(a) * 3.2f); if (Walkable(p)) SpawnPack("Bush_Flowers", p, 0.5f); }
-
-            // boats on the water
-            var b1 = Spawn("xuong", ShorePoint(0.5f, 0.6f), 30); if (b1) b1.AddComponent<Bob>();
-            var tr = Spawn("ghe_thuong_lai", ShorePoint(2.6f, 1.4f), 110); if (tr) tr.AddComponent<TraderBoat>().dock = ShorePoint(2.6f, 1.4f);
-            for (int k = 0; k < 5; k++) { var d = Spawn("vit", ShorePoint(1.2f + k * 0.12f, 0.5f + k * 0.15f), Random.Range(0, 360f)); if (d) d.AddComponent<Bob>().amp = 0.01f; }
-
-            // people, husky, buffalo, chickens
-            string[] people = { "nguoi_nam", "nguoi_nu", "nguoi_nu_2", "nguoi_nam_2", "nguoi_nam", "nguoi_nu" };
-            Walker lead = null;
-            for (int k = 0; k < people.Length; k++)
-            {
-                var p = FindWalkable(new Vector3(Random.Range(-3f, 3f), 0, Random.Range(-3f, 3f)));
-                var go = Spawn(people[k], p, Random.Range(0, 360f));
-                if (go == null) continue;
-                var w = go.AddComponent<Walker>(); w.speed = 0.55f; w.wanderRadius = 3.5f;
-                if (lead == null) lead = w;
-            }
-            var dog = Spawn("husky", FindWalkable(new Vector3(1.6f, 0, -0.3f)), 0);
-            if (dog) { var w = dog.AddComponent<Walker>(); w.quad = true; w.follow = lead; w.speed = 1.2f; }
-            for (int k = 0; k < 4; k++)
-            {
-                var ch = Spawn(k % 2 == 0 ? "ga" : "ga_nau", FindWalkable(new Vector3(2.6f + Random.Range(-1f, 1f), 0, -0.4f + Random.Range(-1f, 1f))), Random.Range(0, 360f));
-                if (ch) { var w = ch.AddComponent<Walker>(); w.speed = 0.4f; w.wanderRadius = 1.0f; w.peck = true; }
-            }
-            if (field != null) AddPlowTeam(field);
+            b.Commit(b.defs["xuong"], ShorePoint(0.5f, 0.6f), 30, true);
         }
 
-        Vector3 FindWalkable(Vector3 p)
+        /// <summary>Things that are not saved: ducks, chickens, husky, trader boat.</summary>
+        public void SpawnAmbient()
+        {
+            for (int k = 0; k < 5; k++) { var d = Spawn("vit", ShorePoint(1.2f + k * 0.12f, 0.5f + k * 0.15f), Random.Range(0, 360f)); if (d) d.AddComponent<Bob>().amp = 0.01f; }
+            var home = Placed.All.Find(p => p.defId == "nha_la" || p.defId == "nha_ngoi");
+            var hp = home ? home.transform.position : Vector3.zero;
+            for (int k = 0; k < 3; k++)
+            {
+                var ch = Spawn(k % 2 == 0 ? "ga" : "ga_nau", FindWalkable(hp + new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f))), Random.Range(0, 360f));
+                if (ch) { var w = ch.AddComponent<Walker>(); w.speed = 0.4f; w.wanderRadius = 1.0f; w.peck = true; }
+            }
+            var tr = Spawn("ghe_thuong_lai", ShorePoint(2.6f, 14f), 110);
+            if (tr) tr.AddComponent<TraderBoat>().dock = ShorePoint(2.6f, 1.4f);
+        }
+
+        /// <summary>Keeps the number of walking villagers in step with the population.</summary>
+        public void SyncVillagers(int pop)
+        {
+            int want = Mathf.Min(pop, 16);
+            while (villagers.Count < want)
+            {
+                int k = villagers.Count;
+                var homes = Placed.All.FindAll(p => p.def != null && p.def.housing > 0);
+                var h = homes.Count > 0 ? homes[k % homes.Count].transform.position : Vector3.zero;
+                var go = Spawn(PeopleModels[k % PeopleModels.Length], FindWalkable(h + new Vector3(0.9f, 0, 0.9f)), Random.Range(0, 360f));
+                if (go == null) break;
+                var w = go.AddComponent<Walker>(); w.speed = 0.55f; w.wanderRadius = 3.5f; w.name = NameOf(k);
+                villagers.Add(w);
+                if (lead == null) lead = w;
+            }
+            while (villagers.Count > want) { var w = villagers[villagers.Count - 1]; villagers.RemoveAt(villagers.Count - 1); if (w) Destroy(w.gameObject); }
+            if (dog == null && lead != null) { dog = Spawn("husky", FindWalkable(lead.transform.position + Vector3.right * 0.5f), 0); if (dog) { var w = dog.AddComponent<Walker>(); w.quad = true; w.follow = lead; w.speed = 1.2f; } }
+        }
+        public void ClearVillagers()
+        {
+            foreach (var w in villagers) if (w) Destroy(w.gameObject);
+            villagers.Clear(); lead = null; if (dog) Destroy(dog); dog = null;
+        }
+        static readonly string[] Names = { "Ba Lụa", "Tư Hùng", "Út Mai", "Bảy Đen", "Sáu Lan", "Năm Lợi", "Hai Thắng", "Chín Hoa", "Tám Sang", "Út Nhỏ", "Mười Bé", "Ba Phước", "Tư Thủy", "Năm Cúc", "Sáu Tài", "Bảy Hồng" };
+        static string NameOf(int k) => Names[k % Names.Length];
+
+        public Vector3 Ground(Vector2 p) => Ground(p.x, p.y);
+        public Vector3 FindWalkable(Vector3 p)
         {
             for (float r = 0; r < 4; r += 0.2f)
                 for (float a = 0; a < Mathf.PI * 2; a += 0.6f)

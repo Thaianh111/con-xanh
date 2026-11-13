@@ -14,7 +14,8 @@ namespace ConXanh
     {
         public static GameUI I;
         Font font; RectTransform canvasRt, drawerContent, ghostBar; GameObject drawer;
-        Text hint, toast, ghostMsg; Button soundBtn, timeBtn;
+        Text hint, toast, ghostMsg, resText, infoText, goalText, orderText; Button soundBtn, timeBtn, newBtn, giveBtn, orderPill; RectTransform orderCard; float newConfirmT;
+        readonly List<(RectTransform rt, Vector3 world, float t)> floaters = new List<(RectTransform, Vector3, float)>();
         float hintT, toastT; string openCat;
         readonly List<(Button b, string key)> drawerButtons = new List<(Button, string)>();
         readonly List<(Button b, string key)> mainButtons = new List<(Button, string)>();
@@ -62,10 +63,28 @@ namespace ConXanh
             title.gameObject.AddComponent<Shadow>().effectColor = new Color(0, 0, 0, 0.6f);
             soundBtn = Btn(top, "", () => { Sound.I.Toggle(); RefreshTop(); }, new Vector2(195, 0), new Vector2(170, 72), 24);
             timeBtn = Btn(top, "", () => { DayNight.I.auto = !DayNight.I.auto; RefreshTop(); }, new Vector2(375, 0), new Vector2(170, 72), 24);
+            newBtn = Btn(top, "Làng mới", NewVillageTap, new Vector2(555, 0), new Vector2(190, 72), 24);
             RefreshTop();
 
+            // HUD: resources, people/happiness/day, goal
+            var hud = Panel(canvasRt, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -120), new Vector2(-40, 150), new Color(0.08f, 0.2f, 0.12f, 0.55f));
+            hud.pivot = new Vector2(0.5f, 1); hud.anchoredPosition = new Vector2(0, -118);
+            resText = Label(hud, "", 27, Color.white, TextAnchor.UpperLeft); Place(resText.rectTransform, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -8), new Vector2(-30, 40)); resText.rectTransform.pivot = new Vector2(0.5f, 1);
+            infoText = Label(hud, "", 25, new Color(0.9f, 1f, 0.85f), TextAnchor.UpperLeft); Place(infoText.rectTransform, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -52), new Vector2(-30, 40)); infoText.rectTransform.pivot = new Vector2(0.5f, 1);
+            goalText = Label(hud, "", 25, new Color(1f, 0.93f, 0.6f), TextAnchor.UpperLeft); Place(goalText.rectTransform, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -96), new Vector2(-30, 40)); goalText.rectTransform.pivot = new Vector2(0.5f, 1);
+
+            // trader order card
+            orderCard = Panel(canvasRt, new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -360), new Vector2(760, 190), Paper);
+            orderText = Label(orderCard, "", 28, Ink, TextAnchor.MiddleCenter); Place(orderText.rectTransform, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -12), new Vector2(-30, 80)); orderText.rectTransform.pivot = new Vector2(0.5f, 1);
+            giveBtn = Btn(orderCard, "Giao hàng", () => { if (TraderBoat.I == null || !TraderBoat.I.Deliver()) Toast("Chưa đủ hàng để giao"); RefreshOrder(); }, new Vector2(150, 14), new Vector2(260, 80), 28, Green, Color.white);
+            Btn(orderCard, "Để sau", () => { orderCard.gameObject.SetActive(false); RefreshOrder(); }, new Vector2(430, 14), new Vector2(180, 80), 26);
+            orderCard.gameObject.SetActive(false);
+            orderPill = Btn(canvasRt, "Đơn của ghe", () => { orderCard.gameObject.SetActive(true); RefreshOrder(); }, Vector2.zero, new Vector2(260, 70), 25, new Color(1f, 0.85f, 0.45f, 0.95f));
+            Place(orderPill.GetComponent<RectTransform>(), new Vector2(1, 1), new Vector2(1, 1), new Vector2(-24, -290), new Vector2(260, 70));
+            orderPill.gameObject.SetActive(false);
+
             // toast + hint
-            toast = Label(canvasRt, "", 30, Color.white, TextAnchor.MiddleCenter); Place(toast.rectTransform, new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -150), new Vector2(980, 70));
+            toast = Label(canvasRt, "", 30, Color.white, TextAnchor.MiddleCenter); Place(toast.rectTransform, new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -290), new Vector2(980, 70));
             toast.gameObject.AddComponent<Outline>().effectColor = new Color(0.1f, 0.3f, 0.15f, 0.9f);
             hint = Label(canvasRt, "", 28, Color.white, TextAnchor.MiddleCenter); Place(hint.rectTransform, new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 380), new Vector2(1000, 60));
             hint.gameObject.AddComponent<Outline>().effectColor = new Color(0, 0, 0, 0.8f);
@@ -101,7 +120,7 @@ namespace ConXanh
 
             Builder.I.onChanged += Refresh;
             Refresh(); ShowHint("view");
-            Toast("Chào mừng về Cồn Xanh! Chọn Địa hình hoặc Nhà để bắt đầu", 3.5f);
+            if (Economy.I != null) Economy.I.onChanged += RefreshHud;
         }
 
         // ---------- behaviour ----------
@@ -114,10 +133,10 @@ namespace ConXanh
             foreach (var it in Cats[cat])
             {
                 var item = it;
-                var b = Btn(drawerContent, item.label, () =>
+                var b = Btn(drawerContent, ItemLabel(item), () =>
                 {
                     Builder.I.SetTool(item.tool, item.place);
-                    if (item.tool == ToolKind.Place) ShowHintText(Builder.I.defs[item.place].hint); else ShowHint(item.key);
+                    if (item.tool == ToolKind.Place) { var why = Economy.I?.CantBuild(item.place); ShowHintText(why ?? Builder.I.defs[item.place].hint); } else ShowHint(item.key);
                 }, Vector2.zero, new Vector2(150, 120), 27);
                 var le = b.gameObject.AddComponent<LayoutElement>(); le.preferredWidth = 150; le.preferredHeight = 120;
                 drawerButtons.Add((b, item.key));
@@ -130,7 +149,14 @@ namespace ConXanh
         {
             var bld = Builder.I;
             string cur = bld.tool == ToolKind.Place && bld.place != null ? bld.place.id : bld.tool.ToString().ToLower();
-            foreach (var (b, key) in drawerButtons) Tint(b, key == cur);
+            foreach (var (b, key) in drawerButtons)
+            {
+                Tint(b, key == cur);
+                var e = Economy.I; if (e == null || !Builder.I.defs.ContainsKey(key)) continue;
+                bool locked = !e.Unlocked(key), poor = e.CantBuild(key) != null;
+                var txt = b.GetComponentInChildren<Text>(); var item = FindItem(key); txt.text = ItemLabel(item);
+                txt.color = locked ? new Color(0.55f, 0.55f, 0.5f) : poor ? new Color(0.7f, 0.3f, 0.2f) : Ink;
+            }
             foreach (var (b, key) in mainButtons) Tint(b, key == "view" ? bld.tool == ToolKind.View : key == openCat);
             if (ghostBar)
             {
@@ -143,6 +169,58 @@ namespace ConXanh
             soundBtn.GetComponentInChildren<Text>().text = Sound.I != null && Sound.I.on ? "Tiếng: bật" : "Tiếng: tắt";
             timeBtn.GetComponentInChildren<Text>().text = DayNight.I != null && DayNight.I.auto ? "Giờ: chạy" : "Giờ: dừng";
         }
+        string ItemLabel(Item it)
+        {
+            if (it.tool != ToolKind.Place || Economy.I == null) return it.label;
+            var lk = Economy.I.LockText(it.place); if (lk != null) return it.label + "\n<size=19>" + lk + "</size>";
+            return it.label + "\n<size=20>" + Economy.I.CostText(it.place) + "</size>";
+        }
+        static Item FindItem(string key) { foreach (var c in Cats.Values) foreach (var it in c) if (it.key == key) return it; return default; }
+
+        void NewVillageTap()
+        {
+            if (newConfirmT > 0) { newConfirmT = 0; newBtn.GetComponentInChildren<Text>().text = "Làng mới"; SaveLoad.I?.NewGame(); return; }
+            newConfirmT = 3f; newBtn.GetComponentInChildren<Text>().text = "Chắc chưa?"; Toast("Chạm lần nữa để bỏ làng này, làm lại từ đầu", 3f);
+        }
+
+        void RefreshHud()
+        {
+            var e = Economy.I; if (e == null || resText == null) return;
+            var sb = new System.Text.StringBuilder();
+            for (int i = 0; i < Economy.Keys.Length; i++) { if (i > 0) sb.Append("   "); sb.Append(Economy.Names[i]).Append(" <b>").Append(Mathf.FloorToInt(e.Get(Economy.Keys[i]))).Append("</b>"); }
+            resText.text = sb.ToString();
+            string season = Weather.Season != null ? Weather.Season.name : "";
+            string sky = Weather.I != null && Weather.I.raining ? " · Mưa" : "";
+            string mood = e.happy >= 70 ? "vui" : e.happy >= 45 ? "ổn" : e.happy >= 25 ? "buồn" : "rất buồn";
+            infoText.text = e.RankName(e.rank) + " · Dân " + Mathf.FloorToInt(e.pop) + "/" + e.Housing + " · Vui " + Mathf.RoundToInt(e.happy) + " (" + mood + ")" + (e.hungry ? " · THIẾU ĂN" : "") + "   |   Ngày " + (DayNight.I ? DayNight.I.day : 1) + " · " + season + sky;
+            goalText.text = "Mục tiêu: " + e.GoalText();
+            RefreshOrder();
+        }
+
+        /// <summary>Shows the trader's order while the boat is docked.</summary>
+        public void RefreshOrder()
+        {
+            if (orderCard == null) return;
+            var tb = TraderBoat.I; var o = tb != null && tb.Docked ? tb.order : null;
+            if (o == null) { orderCard.gameObject.SetActive(false); orderPill.gameObject.SetActive(false); return; }
+            if (!ReferenceEquals(orderShownFor, o)) { orderCard.gameObject.SetActive(true); orderShownFor = o; }
+            orderPill.gameObject.SetActive(!orderCard.gameObject.activeSelf);
+            float have = Economy.I.Get(o.res);
+            orderText.text = "Ghe thương lái cần <b>" + o.amount + " " + Economy.NameOf(o.res).ToLower() + "</b> – trả <b>" + o.reward + " đ</b>\n<size=23>Kho đang có " + Mathf.FloorToInt(have) + "</size>";
+            giveBtn.interactable = have >= o.amount;
+        }
+        object orderShownFor = new object();
+
+        /// <summary>Little "+14 lúa" text that rises above a building.</summary>
+        public void Floater(Vector3 world, string text)
+        {
+            if (canvasRt == null || floaters.Count > 24) return;
+            var t = Label(canvasRt, text, 26, new Color(1f, 0.97f, 0.7f), TextAnchor.MiddleCenter);
+            t.gameObject.AddComponent<Outline>().effectColor = new Color(0.15f, 0.25f, 0.1f, 0.9f);
+            t.rectTransform.sizeDelta = new Vector2(320, 44);
+            floaters.Add((t.rectTransform, world, 0));
+        }
+
         void ShowHint(string key) { if (Hints.TryGetValue(key, out var h)) ShowHintText(h); }
         void ShowHintText(string h) { hint.text = h; hintT = 3.5f; }
         public void Toast(string t, float secs = 2f) { toast.text = t; toastT = secs; }
@@ -152,6 +230,17 @@ namespace ConXanh
             hintT -= Time.deltaTime; toastT -= Time.deltaTime;
             hint.color = new Color(1, 1, 1, Mathf.Clamp01(hintT * 2));
             toast.color = new Color(1, 1, 1, Mathf.Clamp01(toastT * 2));
+            if (newConfirmT > 0) { newConfirmT -= Time.deltaTime; if (newConfirmT <= 0) newBtn.GetComponentInChildren<Text>().text = "Làng mới"; }
+            var cam = Camera.main;
+            for (int i = floaters.Count - 1; i >= 0; i--)
+            {
+                var f = floaters[i]; f.t += Time.deltaTime;
+                if (f.t > 1.6f || cam == null) { Destroy(f.rt.gameObject); floaters.RemoveAt(i); continue; }
+                var sp = cam.WorldToScreenPoint(f.world + Vector3.up * f.t * 0.35f);
+                f.rt.gameObject.SetActive(sp.z > 0); f.rt.position = sp;
+                f.rt.GetComponent<Text>().color = new Color(1f, 0.97f, 0.7f, Mathf.Clamp01((1.6f - f.t) * 2));
+                floaters[i] = f;
+            }
         }
 
         // ---------- widgets ----------
@@ -175,7 +264,7 @@ namespace ConXanh
         {
             var go = new GameObject("Text", typeof(RectTransform), typeof(Text)); go.GetComponent<RectTransform>().SetParent(parent, false);
             var t = go.GetComponent<Text>(); t.font = font; t.fontSize = size; t.color = c; t.alignment = anchor; t.text = s; t.raycastTarget = false;
-            t.horizontalOverflow = HorizontalWrapMode.Wrap; t.verticalOverflow = VerticalWrapMode.Overflow;
+            t.horizontalOverflow = HorizontalWrapMode.Wrap; t.supportRichText = true; t.verticalOverflow = VerticalWrapMode.Overflow;
             return t;
         }
         Button Btn(RectTransform parent, string s, UnityEngine.Events.UnityAction a, Vector2 pos, Vector2 size, int fontSize, Color? bg = null, Color? fg = null)
@@ -183,7 +272,7 @@ namespace ConXanh
             var go = new GameObject("Btn", typeof(RectTransform), typeof(Image), typeof(Button)); var rt = go.GetComponent<RectTransform>(); rt.SetParent(parent, false);
             Place(rt, new Vector2(0, 0), new Vector2(0, 0), pos, size);
             go.GetComponent<Image>().color = bg ?? Paper;
-            var b = go.GetComponent<Button>(); b.onClick.AddListener(a);
+            var b = go.GetComponent<Button>(); b.onClick.AddListener(() => Builder.uiClickFrame = Time.frameCount); b.onClick.AddListener(a);
             var t = Label(rt, s, fontSize, fg ?? Ink, TextAnchor.MiddleCenter); var trt = t.rectTransform; trt.anchorMin = Vector2.zero; trt.anchorMax = Vector2.one; trt.sizeDelta = Vector2.zero; trt.anchoredPosition = Vector2.zero;
             t.fontStyle = FontStyle.Bold;
             return b;

@@ -155,6 +155,23 @@ namespace ConXanh
         }
         void Recolor(float x, float z, float r) { ForEachNear(x, z, r, (i, d) => cols[i] = ColorAt(i)); dirty = true; }
 
+        /// <summary>Puts back terrain from a save.</summary>
+        public void Restore(float[] h, float[] b, byte[] c, byte[] p)
+        {
+            if (h == null || h.Length != H.Length) return;
+            H = h; B = b; carved = c; paint = p;
+            for (int i = 0; i < cols.Length; i++) cols[i] = ColorAt(i);
+            dirty = true; pondDirty = true;
+        }
+
+        /// <summary>Back to the untouched island.</summary>
+        public void ResetTerrain()
+        {
+            for (int i = 0; i < H.Length; i++) { H[i] = B[i] = BaseHeight(X(i), Z(i)); carved[i] = 0; paint[i] = 0; }
+            for (int i = 0; i < cols.Length; i++) cols[i] = ColorAt(i);
+            dirty = true; pondDirty = true; landAdded = false;
+        }
+
         // ---------- mesh ----------
         public void Build()
         {

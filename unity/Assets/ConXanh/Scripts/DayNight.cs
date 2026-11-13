@@ -11,28 +11,36 @@ namespace ConXanh
         public static float Night;
         public static DayNight I;
         void Awake() { I = this; }
-        Light sun; Light[] lamps;
+        Light sun;
         static readonly Color sunDay = new Color(1f, 0.89f, 0.74f), sunDusk = new Color(1f, 0.6f, 0.36f), sunNight = new Color(0.45f, 0.55f, 1f);
         static readonly Color fogDay = new Color(0.66f, 0.84f, 0.98f), fogNight = new Color(0.05f, 0.09f, 0.2f);
 
-        public void Init(Light s)
+        public int day = 1;
+        public System.Action onNewDay;
+        readonly System.Collections.Generic.List<Light> lamps = new System.Collections.Generic.List<Light>();
+        static readonly string[] LampAt = { "nha_la", "nha_ngoi", "dinh", "chua", "cho", "truong", "lo_keo" };
+        float lampScan;
+
+        public void Init(Light s) { sun = s; dayLength = GameData.Load().dayLength; }
+
+        /// <summary>Small warm lamps on houses that glow at night (added as buildings appear).</summary>
+        void ScanLamps()
         {
-            sun = s;
-            // small warm lamps at houses that glow at night
-            var list = new System.Collections.Generic.List<Light>();
-            foreach (var n in new[] { "nha_la", "nha_ngoi", "dinh", "chua", "cho" })
+            lamps.RemoveAll(l => l == null);
+            foreach (var p in Placed.All)
             {
-                var go = GameObject.Find(n); if (go == null) continue;
-                var l = new GameObject("Lamp").AddComponent<Light>(); l.type = LightType.Point; l.range = 2.2f; l.color = new Color(1f, 0.7f, 0.35f);
-                l.transform.position = go.transform.position + go.transform.forward * 0.7f + Vector3.up * 0.7f; list.Add(l);
+                if (System.Array.IndexOf(LampAt, p.defId) < 0 || p.transform.Find("Lamp") != null) continue;
+                var l = new GameObject("Lamp").AddComponent<Light>(); l.type = LightType.Point; l.range = 2.2f; l.color = new Color(1f, 0.7f, 0.35f); l.intensity = 0;
+                l.transform.SetParent(p.transform, false);
+                l.transform.position = p.transform.position + p.transform.forward * 0.7f + Vector3.up * 0.7f; lamps.Add(l);
             }
-            lamps = list.ToArray();
         }
 
         void Update()
         {
             if (InputCompat.KeyT()) auto = !auto;
-            if (auto) time = (time + Time.deltaTime / dayLength) % 1f;
+            if (auto) { time += Time.deltaTime / dayLength; if (time >= 1f) { time -= 1f; day++; onNewDay?.Invoke(); } }
+            lampScan -= Time.deltaTime; if (lampScan <= 0) { lampScan = 1.5f; ScanLamps(); }
             // 0..0.5 day, 0.5..0.6 dusk, 0.6..0.95 night, 0.95..1 dawn
             float night = Mathf.Clamp01(Mathf.InverseLerp(0.52f, 0.62f, time)) * (1 - Mathf.Clamp01(Mathf.InverseLerp(0.93f, 1f, time)));
             float dusk = Mathf.Clamp01(1 - Mathf.Abs(time - 0.55f) / 0.06f) + Mathf.Clamp01(1 - Mathf.Abs(time - 0.97f) / 0.04f);
@@ -43,7 +51,7 @@ namespace ConXanh
             RenderSettings.ambientIntensity = Mathf.Lerp(1f, 0.35f, night);
             RenderSettings.fogColor = Color.Lerp(fogDay, fogNight, night);
             if (Camera.main) { Camera.main.backgroundColor = RenderSettings.fogColor; }
-            foreach (var l in lamps) l.intensity = night * 2.2f;
+            foreach (var l in lamps) if (l) l.intensity = night * 2.2f;
             Night = night;
         }
 

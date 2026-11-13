@@ -23,9 +23,9 @@ Chốt ngày 13/11/2026 với anh Võ Thái Anh. Hướng game: **quản lý là
 **Qua GĐ khi:** chơi tới Thị trấn vẫn còn muốn chơi tiếp.
 
 ## GĐ 3 – Chuyển Unity (~3–4 tuần)
-- [ ] Xuất toàn bộ model code ra GLB
-- [ ] Cảnh Unity URP: nước Shader Graph, cỏ GPU, ánh sáng
-- [ ] Viết lại kinh tế bằng C#, số liệu để trong JSON
+- [x] Xuất toàn bộ model code ra GLB
+- [x] Cảnh Unity URP: nước, ánh sáng, ngày đêm, kéo-vẽ, đặt nhà (đợt 1)
+- [x] Kinh tế C# + JSON, lưu game, mùa vụ, mưa, nước nổi, cầu vồng, đơn ghe (đợt 2)
 - [ ] Anh chạy trên PC + RedMagic, chụp gửi để sửa
 
 **Qua GĐ khi:** bản Android đẹp hơn bản web và chạy mượt. Bắt đầu bằng `/setup-engine`.

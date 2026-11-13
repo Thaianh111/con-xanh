@@ -1,0 +1,58 @@
+{
+  "startMoney": 250, "startRice": 30, "startBamboo": 50, "startPop": 3,
+  "eatPerPersonPerMin": 1.0, "taxPerPersonPerMin": 1.2, "immigrateEvery": 5,
+  "leaveBelowHappy": 25, "arriveAboveHappy": 45, "sellPerMarketPerMin": 40, "foodReservePerPerson": 3,
+  "dayLength": 240, "nightProdMult": 0.5,
+  "traderFirst": 40, "traderEvery": 90, "traderWait": 150,
+  "prices": { "rice": 1, "fish": 2, "veg": 1.5, "coco": 1.5, "candy": 6, "bamboo": 1 },
+  "builds": [
+    { "id": "nha_la",   "cost": { "money": 30, "bamboo": 20 }, "housing": 4 },
+    { "id": "nha_ngoi", "cost": { "money": 90, "bamboo": 45 }, "housing": 6, "unlock": "xom" },
+    { "id": "lu_nuoc",  "cost": { "money": 10 }, "water": 2.6 },
+    { "id": "cho",      "cost": { "money": 80, "bamboo": 40 }, "jobs": 2, "market": 4.5, "unlock": "xom" },
+    { "id": "truong",   "cost": { "money": 120, "bamboo": 50 }, "jobs": 1, "school": 5, "unlock": "xom" },
+    { "id": "dinh",     "cost": { "money": 200, "bamboo": 80 }, "temple": 6, "unlock": "ap" },
+    { "id": "chua",     "cost": { "money": 150, "bamboo": 60 }, "temple": 5, "unlock": "ap" },
+    { "id": "ruong",    "cost": { "money": 40 }, "jobs": 2, "cycle": 26, "outRes": "rice", "outAmt": 14 },
+    { "id": "vuon_rau", "cost": { "money": 20 }, "jobs": 1, "cycle": 16, "outRes": "veg", "outAmt": 5 },
+    { "id": "ben_ca",   "cost": { "money": 30, "bamboo": 15 }, "jobs": 2, "cycle": 14, "outRes": "fish", "outAmt": 4 },
+    { "id": "bui_tre",  "cost": { "money": 15 }, "jobs": 1, "cycle": 16, "outRes": "bamboo", "outAmt": 6 },
+    { "id": "dua",      "cost": { "money": 6 }, "cycle": 30, "outRes": "coco", "outAmt": 2 },
+    { "id": "lo_keo",   "cost": { "money": 60, "bamboo": 30 }, "jobs": 2, "cycle": 12, "inRes": "coco", "inAmt": 3, "outRes": "candy", "outAmt": 2, "unlock": "xom" },
+    { "id": "cay",      "cost": { "money": 3 }, "decor": 1 },
+    { "id": "chuoi",    "cost": { "money": 3 }, "decor": 1 },
+    { "id": "dua_nuoc", "cost": { "money": 3 }, "decor": 1 },
+    { "id": "hoa",      "cost": { "money": 2 }, "decor": 1 },
+    { "id": "xuong",    "cost": { "money": 15 }, "decor": 1 }
+  ],
+  "ranks": [
+    { "id": "lang", "name": "Làng", "pop": 0 }, { "id": "xom", "name": "Xóm", "pop": 10 },
+    { "id": "ap", "name": "Ấp", "pop": 25 }, { "id": "thitran", "name": "Thị trấn", "pop": 50 }
+  ],
+  "seasons": [
+    { "id": "kho", "name": "Mùa khô", "days": 3, "rain": 0.12, "flood": 0, "rice": 1.3, "fish": 0.8, "veg": 1, "bamboo": 1 },
+    { "id": "mua", "name": "Mùa mưa", "days": 2, "rain": 0.75, "flood": 0.04, "rice": 1.1, "fish": 1, "veg": 1.2, "bamboo": 1.3 },
+    { "id": "nuocnoi", "name": "Mùa nước nổi", "days": 2, "rain": 0.35, "flood": 0.13, "rice": 0.5, "fish": 1.9, "veg": 0.7, "bamboo": 1 }
+  ],
+  "orders": [
+    { "res": "rice", "min": 15, "max": 35, "mult": 2.2 },
+    { "res": "fish", "need": "ben_ca", "min": 8, "max": 20, "mult": 2.2 },
+    { "res": "veg", "need": "vuon_rau", "min": 10, "max": 22, "mult": 2.2 },
+    { "res": "coco", "need": "dua", "min": 8, "max": 18, "mult": 2.0 },
+    { "res": "bamboo", "need": "bui_tre", "min": 15, "max": 30, "mult": 1.8 },
+    { "res": "candy", "need": "lo_keo", "min": 6, "max": 14, "mult": 2.4 }
+  ],
+  "goals": [
+    { "id": "g1", "text": "Cất thêm 1 nhà lá", "build": "nha_la", "count": 2 },
+    { "id": "g2", "text": "Làm 1 ruộng lúa", "build": "ruong", "count": 1 },
+    { "id": "g3", "text": "Làm 1 vườn rau", "build": "vuon_rau", "count": 1 },
+    { "id": "g4", "text": "Dựng bến cá ở mé nước", "build": "ben_ca", "count": 1 },
+    { "id": "g5", "text": "Đón đủ 10 dân → lên Xóm", "pop": 10 },
+    { "id": "g6", "text": "Mở chợ", "build": "cho", "count": 1 },
+    { "id": "g7", "text": "Mở lò kẹo dừa", "build": "lo_keo", "count": 1 },
+    { "id": "g8", "text": "Xây trường học", "build": "truong", "count": 1 },
+    { "id": "g9", "text": "Đón đủ 25 dân → lên Ấp", "pop": 25 },
+    { "id": "g10", "text": "Dựng đình làng", "build": "dinh", "count": 1 },
+    { "id": "g11", "text": "Đón đủ 50 dân → lên Thị trấn", "pop": 50 }
+  ]
+}

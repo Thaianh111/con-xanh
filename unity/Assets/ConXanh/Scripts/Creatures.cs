@@ -76,6 +76,7 @@ namespace ConXanh
         void Update()
         {
             float dt = Time.deltaTime;
+            if (field == null) { Destroy(gameObject); return; }
             if (leader != null)
             {
                 var back = leader.position - leader.forward * 0.45f;
@@ -105,7 +106,7 @@ namespace ConXanh
         void Update()
         {
             float t = Time.time + seed;
-            transform.position = p0 + new Vector3(0, Mathf.Sin(t * 1.5f) * amp - 0.02f, 0);
+            transform.position = p0 + new Vector3(0, Mathf.Sin(t * 1.5f) * amp - 0.02f + (p0.y < 0.1f ? Weather.Flood : Weather.Flood * 0.4f), 0);
             var e = transform.eulerAngles; transform.rotation = Quaternion.Euler(Mathf.Sin(t * 0.9f) * 2f, e.y, Mathf.Sin(t * 1.1f) * 2.5f);
         }
     }
@@ -122,23 +123,58 @@ namespace ConXanh
 namespace ConXanh
 {
     /// <summary>Ghe thương lái: sails in from the open sea ringing its bell, waits, sails away, comes back later.</summary>
+    /// <summary>Thương lái: arrives on a timer, rings the bell, offers an order while docked, then leaves.</summary>
     public class TraderBoat : MonoBehaviour
     {
+        public static TraderBoat I;
         public Vector3 dock; Vector3 far; float t; int state; float wait;
-        void Start() { var o = dock; o.y = 0; far = dock + o.normalized * 14f; transform.position = far; state = 0; t = 0; Sound.I?.Bell(); GameUI.I?.Toast("Reng reng! Ghe thương lái đang tới cồn"); }
+        public Order order;
+        public class Order { public string res; public int amount, reward; }
+        public bool Docked => state == 1;
+
+        void Start()
+        {
+            I = this; var o = dock; o.y = 0; far = dock + o.normalized * 14f; transform.position = far;
+            state = 3; wait = GameData.Load().traderFirst;
+        }
+        void Arrive() { state = 0; t = 0; Sound.I?.Bell(); GameUI.I?.Toast("Reng reng! Ghe thương lái đang tới cồn"); }
         void Update()
         {
-            float dt = Time.deltaTime;
-            if (state == 0) { t = Mathf.Min(1, t + dt / 12f); Move(far, dock, 1 - (1 - t) * (1 - t)); if (t >= 1) { state = 1; wait = 45f; Sound.I?.Bell(); GameUI.I?.Toast("Ghe thương lái đã cập bến"); } }
-            else if (state == 1) { wait -= dt; Bob(); if (wait <= 0) { state = 2; t = 0; } }
-            else if (state == 2) { t = Mathf.Min(1, t + dt / 12f); Move(dock, far, t * t); if (t >= 1) { state = 3; wait = 60f; } }
-            else { wait -= dt; if (wait <= 0) Start(); }
+            float dt = Time.deltaTime; var gd = GameData.Load();
+            if (state == 0)
+            {
+                t = Mathf.Min(1, t + dt / 12f); Move(far, dock, 1 - (1 - t) * (1 - t));
+                if (t >= 1) { state = 1; wait = gd.traderWait; order = MakeOrder(); Sound.I?.Bell(); GameUI.I?.Toast("Ghe thương lái đã cập bến – xem đơn hàng nha", 3f); GameUI.I?.RefreshOrder(); }
+            }
+            else if (state == 1) { wait -= dt; Bob(); if (wait <= 0) Leave(); }
+            else if (state == 2) { t = Mathf.Min(1, t + dt / 12f); Move(dock, far, t * t); if (t >= 1) { state = 3; wait = gd.traderEvery; } }
+            else { wait -= dt; if (wait <= 0) Arrive(); }
+        }
+        public void Leave() { state = 2; t = 0; order = null; GameUI.I?.RefreshOrder(); }
+
+        /// <summary>Picks a resource the village can actually make.</summary>
+        static Order MakeOrder()
+        {
+            var gd = GameData.Load(); var ok = new System.Collections.Generic.List<OrderDef>();
+            foreach (var o in gd.orders) if (string.IsNullOrEmpty(o.need) || Placed.Count(o.need) > 0) ok.Add(o);
+            if (ok.Count == 0) return null;
+            var d = ok[Random.Range(0, ok.Count)];
+            int amt = Mathf.RoundToInt(Random.Range(d.min, d.max + 1) / 5f) * 5; amt = Mathf.Max(d.min, amt);
+            return new Order { res = d.res, amount = amt, reward = Mathf.RoundToInt(amt * gd.Price(d.res) * d.mult) };
+        }
+        public bool Deliver()
+        {
+            var e = Economy.I; if (order == null || e.Get(order.res) < order.amount) return false;
+            e.Add(order.res, -order.amount); e.Add("money", order.reward); e.ordersDone++;
+            GameUI.I?.Floater(transform.position + Vector3.up * 0.6f, "+" + order.reward + " đ");
+            GameUI.I?.Toast("Giao hàng xong, được " + order.reward + " đồng!", 2.5f); Sound.I?.Bell();
+            Leave(); return true;
         }
         void Move(Vector3 a, Vector3 b, float k)
         {
             var p = Vector3.Lerp(a, b, k); transform.position = p; Bob();
-            var d = b - a; d.y = 0; if (d.sqrMagnitude > 0.001f) transform.rotation = Quaternion.LookRotation(Quaternion.Euler(0, -90, 0) * d) ;
+            var d = b - a; d.y = 0; if (d.sqrMagnitude > 0.001f) transform.rotation = Quaternion.LookRotation(Quaternion.Euler(0, -90, 0) * d);
         }
-        void Bob() { var p = transform.position; p.y = Mathf.Sin(Time.time * 1.4f) * 0.02f - 0.04f; transform.position = p; }
+        void Bob() { var p = transform.position; p.y = Mathf.Sin(Time.time * 1.4f) * 0.02f - 0.04f + Weather.Flood; transform.position = p; }
     }
 }

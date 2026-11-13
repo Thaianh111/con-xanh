@@ -90,7 +90,7 @@ namespace ConXanh
         void Update()
         {
             float dt = Time.deltaTime, night = DayNight.Night;
-            waves.volume = 0.28f + 0.06f * Mathf.Sin(Time.time * 0.45f);
+            waves.volume = 0.28f + 0.06f * Mathf.Sin(Time.time * 0.45f) + Weather.Rain * 0.45f;
             birdT -= dt; if (birdT <= 0) { birdT = Random.Range(2.5f, 7f); if (night < 0.3f) { sfx.panStereo = Random.Range(-0.8f, 0.8f); sfx.PlayOneShot(chirps[Random.Range(0, chirps.Length)], 0.35f); } }
             crickT -= dt; if (crickT <= 0) { crickT = Random.Range(0.3f, 1.2f); if (night > 0.5f) sfx.PlayOneShot(cricket, 0.5f * night); }
             musicT -= dt;

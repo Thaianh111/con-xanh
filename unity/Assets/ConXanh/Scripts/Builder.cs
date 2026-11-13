@@ -24,6 +24,7 @@ namespace ConXanh
         public PlaceDef place;
         public readonly Dictionary<string, PlaceDef> defs = new Dictionary<string, PlaceDef>();
         public System.Action onChanged;
+        public static int uiClickFrame = -10;   // a button acted this frame: don't treat the same click as a world tap
 
         Island island; ConXanhGame game;
         bool stroking; Vector3 last; Vector2 downPos; bool downOverUI;
@@ -84,12 +85,12 @@ namespace ConXanh
             if (island == null) return;
             InputCompat.Pointer(out var pos, out bool down, out bool held, out bool up, out int count);
             if (count >= 2) { if (stroking) EndStroke(); return; }
-            if (down) { downPos = pos; downOverUI = OverUI(pos); if (!downOverUI && IsDrawTool) BeginStroke(pos); }
+            if (down) { downPos = pos; downOverUI = OverUI(pos) || Time.frameCount - uiClickFrame <= 1; if (!downOverUI && IsDrawTool) BeginStroke(pos); }
             if (held && stroking) ContinueStroke(pos);
             if (up)
             {
                 if (stroking) EndStroke();
-                else if (!downOverUI && (pos - downPos).magnitude < 12f) Tap(pos);
+                else if (!downOverUI && Time.frameCount - uiClickFrame > 1 && (pos - downPos).magnitude < 12f) Tap(pos);
             }
         }
 
@@ -134,7 +135,7 @@ namespace ConXanh
         {
             a.y = b.y = 0; var mid = (a + b) / 2; var d = b - a; if (d.sqrMagnitude < 1e-4f) return;
             var go = game.Spawn("cau_khi", mid, Quaternion.LookRotation(d).eulerAngles.y, 1, 0);
-            if (go != null) { var s = go.transform.localScale; go.transform.localScale = new Vector3(s.x, s.y, d.magnitude / 0.5f); go.name = "cau_khi"; game.AddPicker(go); }
+            if (go != null) { var s = go.transform.localScale; go.transform.localScale = new Vector3(s.x, s.y, d.magnitude / 0.5f); go.name = "cau_khi"; game.AddPicker(go); var pl = go.GetComponent<Placed>(); pl.defId = "cau_khi"; pl.model = "cau_khi"; }
         }
 
         // ---------- taps ----------
@@ -147,8 +148,9 @@ namespace ConXanh
             else Commit(place, p, Random.Range(0f, 360f));
         }
 
-        string Check(PlaceDef d, Vector3 p)
+        string Check(PlaceDef d, Vector3 p, bool free = false)
         {
+            if (!free && Economy.I != null) { var why = Economy.I.CantBuild(d.id); if (why != null) return why; }
             bool water = island.IsWater(p.x, p.z);
             if (d.water) return water ? null : "Xuồng phải thả dưới nước";
             if (!island.IsLand(p.x, p.z)) return "Chỗ này là nước, chọn chỗ đất nha";
@@ -168,23 +170,44 @@ namespace ConXanh
             return best;
         }
 
-        public void Commit(PlaceDef d, Vector3 p, float rotY)
+        /// <summary>Builds d at p. free = no cost (start village); saved = restore exactly from a save.</summary>
+        public GameObject Commit(PlaceDef d, Vector3 p, float rotY, bool free = false, SaveObj saved = null)
         {
-            var err = Check(d, p); if (err != null) { GameUI.I?.Toast(err); return; }
-            GameObject go;
-            if (d.water) { go = game.Spawn(d.models[Random.Range(0, d.models.Length)], new Vector3(p.x, island.InPond(p.x, p.z) ? Island.Pond : 0, p.z), rotY); if (go) go.AddComponent<Bob>(); }
-            else if (d.packNodes != null) go = game.SpawnPack(d.packNodes[Random.Range(0, d.packNodes.Length)], p, d.scale * Random.Range(0.85f, 1.2f), rotY);
+            if (saved == null) { var err = Check(d, p, free); if (err != null) { GameUI.I?.Toast(err); return null; } }
+            GameObject go; string model;
+            if (d.water)
+            {
+                model = saved?.model ?? d.models[Random.Range(0, d.models.Length)];
+                go = game.Spawn(model, new Vector3(p.x, island.InPond(p.x, p.z) ? Island.Pond : 0, p.z), rotY); if (go) go.AddComponent<Bob>();
+            }
+            else if (d.packNodes != null) { model = saved?.model ?? d.packNodes[Random.Range(0, d.packNodes.Length)]; go = game.SpawnPack(model, p, d.scale * Random.Range(0.85f, 1.2f), rotY); }
             else
             {
-                if (d.flatten > 0) island.Flatten(p.x, p.z, d.flatten, p.y);
-                if (d.shore) rotY = ShoreAngle(p) ?? rotY;
-                go = game.Spawn(d.models[Random.Range(0, d.models.Length)], p, rotY, 1, 0);
+                if (d.flatten > 0 && saved == null) island.Flatten(p.x, p.z, d.flatten, p.y);
+                if (d.shore && saved == null) rotY = ShoreAngle(p) ?? rotY;
+                model = saved?.model ?? d.models[Random.Range(0, d.models.Length)];
+                go = game.Spawn(model, p, rotY, 1, 0);
             }
-            if (go == null) return;
+            if (go == null) return null;
+            if (saved != null) { if (!d.water) go.transform.position = saved.p; go.transform.rotation = saved.r; go.transform.localScale = saved.s; }
             game.Register(go, d.block);
-            go.AddComponent<GrowIn>();
+            var pl = go.GetComponent<Placed>(); pl.defId = d.id; pl.model = model; if (saved != null) pl.prog = saved.prog;
             if (d.id == "ruong") game.AddPlowTeam(go);
-            Sound.I?.Place();
+            if (saved == null)
+            {
+                go.AddComponent<GrowIn>();
+                if (!free) { Economy.I?.Pay(d.id); Sound.I?.Place(); }
+            }
+            onChanged?.Invoke();
+            return go;
+        }
+
+        /// <summary>Restores a bridge plank from a save.</summary>
+        public void RestoreBridge(SaveObj o)
+        {
+            var go = game.Spawn("cau_khi", o.p, 0, 1, 0); if (go == null) return;
+            go.transform.rotation = o.r; go.transform.localScale = o.s; go.name = "cau_khi"; game.AddPicker(go);
+            var pl = go.GetComponent<Placed>(); pl.defId = "cau_khi"; pl.model = "cau_khi";
         }
 
         // ---------- ghost ----------
@@ -215,7 +238,7 @@ namespace ConXanh
             onChanged?.Invoke();
         }
         public void RotateGhost() { if (ghost == null) return; ghostRot += 45; UpdateGhost(); }
-        public void ConfirmGhost() { if (ghost == null || !GhostValid) return; var d = ghostDef; var p = ghostPos; float r = ghost.transform.eulerAngles.y; CancelGhost(); Commit(d, p, r); }
+        public void ConfirmGhost() { if (ghost == null) return; UpdateGhost(); if (!GhostValid) { GameUI.I?.Toast(GhostMsg); return; } var d = ghostDef; var p = ghostPos; float r = ghost.transform.eulerAngles.y; CancelGhost(); Commit(d, p, r); }
         public void CancelGhost() { if (ghost != null) Destroy(ghost); ghost = null; ghostDef = null; onChanged?.Invoke(); }
 
         // ---------- erase ----------
@@ -224,12 +247,22 @@ namespace ConXanh
             if (!Physics.Raycast(RayAt(pos), out var hit, 200f)) return;
             var root = hit.collider.GetComponentInParent<Placed>();
             if (root == null) return;
-            game.Unregister(root.gameObject); Destroy(root.gameObject); Sound.I?.Pluck(5, 0.12f);
+            Economy.I?.Refund(root.defId, root.transform.position);
+            game.Unregister(root.gameObject); Destroy(root.gameObject); Sound.I?.Pluck(5, 0.12f); onChanged?.Invoke();
         }
     }
 
     /// <summary>Marks a placed object (for erasing / saving).</summary>
-    public class Placed : MonoBehaviour { public float block; }
+    public class Placed : MonoBehaviour
+    {
+        public float block; public string defId, model; public float prog;
+        public static readonly List<Placed> All = new List<Placed>();
+        BuildDef cached; bool looked;
+        public BuildDef def { get { if (!looked && defId != null) { cached = GameData.Load().Build(defId); looked = true; } return cached; } }
+        void OnEnable() { All.Add(this); }
+        void OnDisable() { All.Remove(this); }
+        public static int Count(string id) { int n = 0; foreach (var p in All) if (p.defId == id) n++; return n; }
+    }
 
     /// <summary>Little bounce when something is placed.</summary>
     public class GrowIn : MonoBehaviour
