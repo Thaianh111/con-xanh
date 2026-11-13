@@ -10,7 +10,7 @@
   canvas{display:block}
   .top{position:fixed;top:10px;left:10px;right:10px;display:flex;gap:8px;align-items:flex-start;pointer-events:none}
   .btn{pointer-events:auto;border:0;background:#fffdf6;border-radius:12px;width:42px;height:42px;font-size:20px;box-shadow:0 2px 6px rgba(0,0,0,.18);cursor:pointer;color:#33402c}
-  .tasks{pointer-events:auto;background:#fffdf6;border-radius:12px;padding:8px 12px;box-shadow:0 2px 6px rgba(0,0,0,.18);font-size:13px;color:#33402c;max-width:240px}
+  .tasks{pointer-events:auto;background:#fffdf6;border-radius:12px;padding:8px 12px;box-shadow:0 2px 6px rgba(0,0,0,.18);font-size:12px;color:#33402c;max-width:220px;cursor:pointer}
   .tasks b{color:#2f7d4a}
   .tasks ul{margin:6px 0 0;padding:0;list-style:none;display:none}
   .tasks.open ul{display:block}
@@ -18,10 +18,12 @@
   .tasks li.done{color:#8aa080;text-decoration:line-through}
   .sky{pointer-events:auto;margin-left:auto;background:#fffdf6;border-radius:12px;padding:8px 10px;box-shadow:0 2px 6px rgba(0,0,0,.18);display:flex;align-items:center;gap:6px;font-size:16px}
   .sky input{width:100px;accent-color:#2f7d4a}
-  .hint{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:rgba(30,40,30,.7);color:#fff;padding:7px 14px;border-radius:999px;font-size:13px;white-space:nowrap;max-width:94vw;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+  .hint{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);background:rgba(30,40,30,.7);color:#fff;padding:7px 14px;border-radius:999px;font-size:13px;white-space:nowrap;max-width:94vw;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
   .bar{position:fixed;left:0;right:0;bottom:10px;display:flex;gap:6px;padding:0 8px 4px;overflow-x:auto;scrollbar-width:none}
   .bar::-webkit-scrollbar{display:none}
   .bar>.tool:first-child{margin-left:auto}.bar>.tool:last-child{margin-right:auto}
+  .joy{position:fixed;left:18px;bottom:132px;width:120px;height:120px;border-radius:50%;background:rgba(255,253,246,.35);border:2px solid rgba(255,255,255,.7);display:none;touch-action:none;z-index:3}
+  .joy.on{display:block}.knob{position:absolute;left:50%;top:50%;width:52px;height:52px;border-radius:50%;background:#fffdf6;box-shadow:0 2px 6px rgba(0,0,0,.25);transform:translate(-50%,-50%)}
   .cam{position:fixed;right:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px}
   .cam .btn{width:44px;height:44px}
   .load{position:fixed;inset:0;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;background:linear-gradient(#a9dcff,#e6f6ff);color:#2f4a2a;font-size:15px;z-index:9;transition:opacity .6s}
@@ -30,7 +32,18 @@
   .tool{flex:0 0 auto;border:2px solid transparent;background:#fffdf6;border-radius:12px;width:58px;height:66px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:22px;box-shadow:0 2px 6px rgba(0,0,0,.18);cursor:pointer;color:#33402c}
   .tool span{font-size:11px}
   .tool.on{border-color:#2f7d4a;background:#e9f7df}
-  .toast{position:fixed;top:64px;left:50%;transform:translate(-50%,-20px);opacity:0;background:#2f7d4a;color:#fff;padding:8px 16px;border-radius:999px;font-size:14px;transition:.35s;pointer-events:none;white-space:nowrap}
+  .res{position:fixed;top:60px;left:10px;right:64px;display:flex;flex-wrap:wrap;gap:4px;pointer-events:none;font-size:12px}
+  .res b,.res span{background:rgba(255,253,246,.92);border-radius:999px;padding:3px 8px;box-shadow:0 1px 3px rgba(0,0,0,.15);color:#33402c;white-space:nowrap}
+  .res b{background:#2f7d4a;color:#fff}.res .bad{background:#ffe0d8;color:#a33}
+  .tabs{position:fixed;left:0;right:0;bottom:82px;display:flex;justify-content:center;gap:6px;padding:0 8px}
+  .tab{border:0;border-radius:999px;padding:5px 10px;font-size:12px;background:rgba(255,253,246,.85);color:#33402c;box-shadow:0 1px 3px rgba(0,0,0,.15);cursor:pointer}
+  .tab.on{background:#2f7d4a;color:#fff}
+  .tool small{font-size:9px;opacity:.75;white-space:nowrap}
+  .tool{position:relative}.tool.poor{opacity:.55}.tool.locked{opacity:.4;filter:grayscale(1)}
+  .tool .lk{position:absolute;top:2px;left:0;right:0;font-size:9px;font-style:normal}
+  #ft{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+  .ftx{position:absolute;left:0;top:0;font-weight:700;font-size:13px;text-shadow:0 1px 3px rgba(0,0,0,.7),0 0 2px rgba(0,0,0,.6);white-space:nowrap}
+  .toast{position:fixed;top:96px;left:50%;transform:translate(-50%,-20px);opacity:0;background:#2f7d4a;color:#fff;padding:8px 16px;border-radius:999px;font-size:14px;transition:.35s;pointer-events:none;white-space:nowrap}
   .toast.show{opacity:1;transform:translate(-50%,0)}
   .credit{position:fixed;right:12px;bottom:84px;font-size:10px;color:rgba(255,255,255,.9);text-shadow:0 1px 2px rgba(0,0,0,.45);pointer-events:none}
   .err{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#a9dcff;color:#223;padding:20px;text-align:center}
@@ -43,13 +56,17 @@
 <div class="top">
   <button class="btn" id="undo" title="Hoàn tác">↶</button>
   <button class="btn" id="hq" title="Đồ họa cao / thấp">✨</button>
-  <div class="tasks" id="tasks"><b id="tcount">0/8</b> Nhiệm vụ cồn ▾<ul id="tlist"></ul></div>
+  <div class="tasks" id="tasks">🎯 <b id="tcount"></b> ▾<ul id="tlist"></ul></div>
   <div class="sky">☀️<input id="time" type="range" min="0" max="1" step="0.01" value="0.12">🌙</div>
 </div>
+<div class="res" id="res"></div>
 <div class="toast" id="toast"></div>
 <div class="hint" id="hint"></div>
 <div class="credit">VTA Games · Võ Thái Anh</div>
+<div class="tabs" id="tabs"></div>
 <div class="bar" id="bar"></div>
+<div id="ft"></div>
+<div class="joy" id="joy"><div class="knob" id="knob"></div></div>
 <div class="cam"><button class="btn" id="camL" title="Xoay trái">⟲</button><button class="btn" id="camR" title="Xoay phải">⟳</button><button class="btn" id="camUp" title="Nhìn từ trên">⤒</button><button class="btn" id="camDn" title="Nhìn ngang">⤓</button><button class="btn" id="zin" title="Phóng to">＋</button><button class="btn" id="zout" title="Thu nhỏ">－</button></div>
 <div class="load" id="load"><b>Cồn Xanh</b><div>Đang chở cây cỏ, nhà cửa lên cồn…</div><div class="pb"><i id="pbar"></i></div><div style="font-size:11px;opacity:.7">VTA Games · Võ Thái Anh</div></div>
 <div class="err" id="err">Không tải được 3D (cần mạng để tải Three.js). Anh thử mở lại nha.</div>
@@ -406,38 +423,239 @@ function makePalm() {
   g.userData.kind = 'palm';
   return shadowAll(g);
 }
+// ================= miền Tây asset set (procedural, VTA Games) =================
+function canvasTex(w, h, draw, rx = 1, ry = 1) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx, ry); t.anisotropy = 4;
+  return t;
+}
+const R01 = (() => { let s = 99; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
+const TX = {
+  thatch: canvasTex(256, 256, (g, w, h) => {
+    g.fillStyle = '#9c7232'; g.fillRect(0, 0, w, h);
+    const cols = ['#c99a4a', '#8a6227', '#d8b060', '#7a5520', '#b88a3e', '#e0bd6a'];
+    for (let k = 0; k < 1400; k++) {
+      const x = R01() * w, y = R01() * h, l = 18 + R01() * 40;
+      g.strokeStyle = cols[k % cols.length]; g.lineWidth = 1 + R01() * 1.5;
+      g.beginPath(); g.moveTo(x, y); g.lineTo(x + (R01() - 0.5) * 4, y + l); g.stroke();
+    }
+    for (let y = 0; y < h; y += 64) { const gr = g.createLinearGradient(0, y + 44, 0, y + 64); gr.addColorStop(0, 'rgba(40,25,5,0)'); gr.addColorStop(1, 'rgba(40,25,5,0.45)'); g.fillStyle = gr; g.fillRect(0, y + 44, w, 20); }
+  }, 3, 2),
+  bamboo: canvasTex(64, 256, (g, w, h) => {
+    g.fillStyle = '#c9b46c'; g.fillRect(0, 0, w, h);
+    for (let k = 0; k < 40; k++) { g.fillStyle = R01() < 0.5 ? 'rgba(255,240,180,.25)' : 'rgba(90,70,20,.18)'; g.fillRect(R01() * w, 0, 1 + R01() * 2, h); }
+    for (const y of [0, 128]) { g.fillStyle = '#6f5a25'; g.fillRect(0, y, w, 5); g.fillStyle = '#e6d48e'; g.fillRect(0, y + 5, w, 3); }
+  }, 1, 2),
+  weave: canvasTex(128, 128, (g, w, h) => {
+    g.fillStyle = '#5a4520'; g.fillRect(0, 0, w, h);
+    const s = 16;
+    for (let y = 0; y < h; y += s) for (let x = 0; x < w; x += s) {
+      const hor = ((x + y) / s) % 2 === 0;
+      g.fillStyle = hor ? '#d9bf7d' : '#c4a663'; g.fillRect(x + 1, y + 1, s - 2, s - 2);
+      g.strokeStyle = 'rgba(90,65,25,.5)'; g.lineWidth = 1;
+      for (let k = 3; k < s - 2; k += 4) { g.beginPath(); if (hor) { g.moveTo(x + 1, y + k); g.lineTo(x + s - 1, y + k); } else { g.moveTo(x + k, y + 1); g.lineTo(x + k, y + s - 1); } g.stroke(); }
+    }
+  }, 3, 1.5),
+  wood: canvasTex(256, 128, (g, w, h) => {
+    g.fillStyle = '#7b5333'; g.fillRect(0, 0, w, h);
+    for (let y = 0; y < h; y += 32) { g.fillStyle = y % 64 ? '#86603c' : '#6f4a2c'; g.fillRect(0, y, w, 30); g.fillStyle = '#4a3019'; g.fillRect(0, y + 30, w, 2); }
+    g.strokeStyle = 'rgba(50,30,12,.35)';
+    for (let k = 0; k < 60; k++) { const y = R01() * h; g.beginPath(); g.moveTo(0, y); for (let x = 0; x <= w; x += 16) g.lineTo(x, y + Math.sin(x * 0.05 + k) * 2); g.stroke(); }
+  }, 2, 1),
+  leaf: canvasTex(64, 256, (g, w, h) => {
+    const gr = g.createLinearGradient(0, 0, w, 0); gr.addColorStop(0, '#3f8a2a'); gr.addColorStop(0.5, '#6cbf45'); gr.addColorStop(1, '#3f8a2a');
+    g.fillStyle = gr; g.fillRect(0, 0, w, h);
+    g.strokeStyle = 'rgba(210,240,160,.55)'; g.lineWidth = 1;
+    for (let y = -40; y < h; y += 7) { g.beginPath(); g.moveTo(w / 2, y + 20); g.lineTo(0, y); g.moveTo(w / 2, y + 20); g.lineTo(w, y); g.stroke(); }
+    g.fillStyle = '#d8eeaa'; g.fillRect(w / 2 - 2, 0, 4, h);
+    g.fillStyle = 'rgba(120,90,30,.5)'; g.fillRect(0, 0, 2, h); g.fillRect(w - 2, 0, 2, h);
+  }),
+  frond: canvasTex(128, 512, (g, w, h) => {
+    g.clearRect(0, 0, w, h);
+    for (let y = 8; y < h - 8; y += 9) {
+      const len = (w / 2 - 4) * Math.sin(Math.PI * (y / h)) ** 0.5;
+      g.strokeStyle = ['#5aa83c', '#6dbb48', '#7fca55'][(y / 9) % 3 | 0]; g.lineWidth = 5; g.lineCap = 'round';
+      g.beginPath(); g.moveTo(w / 2, y); g.lineTo(w / 2 - len, y + 22); g.stroke();
+      g.beginPath(); g.moveTo(w / 2, y); g.lineTo(w / 2 + len, y + 22); g.stroke();
+    }
+    g.fillStyle = '#9fc060'; g.fillRect(w / 2 - 2, 0, 4, h);
+  }),
+};
+const MT = {
+  thatch: new THREE.MeshStandardMaterial({ map: TX.thatch, roughness: 1 }),
+  bamboo: new THREE.MeshStandardMaterial({ map: TX.bamboo, roughness: 0.7 }),
+  weave: new THREE.MeshStandardMaterial({ map: TX.weave, roughness: 0.95, side: THREE.DoubleSide }),
+  wood: new THREE.MeshStandardMaterial({ map: TX.wood, roughness: 0.85, side: THREE.DoubleSide }),
+  leaf: new THREE.MeshStandardMaterial({ map: TX.leaf, roughness: 0.7, side: THREE.DoubleSide }),
+  frond: new THREE.MeshStandardMaterial({ map: TX.frond, roughness: 0.8, side: THREE.DoubleSide, alphaTest: 0.5 }),
+  jar: new THREE.MeshStandardMaterial({ color: 0x7a3a1c, roughness: 0.35, metalness: 0.05 }),
+  stem: new THREE.MeshStandardMaterial({ color: 0x7f9a3c, roughness: 0.8 }),
+  straw: new THREE.MeshStandardMaterial({ color: 0xe8d39a, roughness: 0.9 }),
+  red: new THREE.MeshStandardMaterial({ color: 0xc0392b, roughness: 0.8 }),
+};
+const UP = new THREE.Vector3(0, 1, 0);
+function cylBetween(a, b, r, mat, seg = 6) {
+  const d = new THREE.Vector3().subVectors(b, a), len = d.length();
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, seg), mat);
+  m.position.copy(a).addScaledVector(d, 0.5);
+  m.quaternion.setFromUnitVectors(UP, d.normalize());
+  return m;
+}
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+
 function makeHouse() {
   const g = new THREE.Group();
-  for (const [x, z] of [[-0.5, -0.35], [0.5, -0.35], [-0.5, 0.35], [0.5, 0.35], [0, -0.35], [0, 0.35]]) {
-    const p = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.04, 0.28, 6), mats.dark); p.position.set(x, 0.14, z); g.add(p);
+  const W = 1.2, D = 0.8, FY = 0.32, WH = 0.55, PZ = 0.42; // width, depth, floor height, wall height, porch depth
+  // stilts
+  for (const x of [-W / 2 + 0.05, 0, W / 2 - 0.05]) for (const z of [-D / 2 + 0.05, D / 2 - 0.05, D / 2 + PZ - 0.04])
+    g.add(cylBetween(V(x, -0.05, z), V(x, FY, z), 0.035, MT.bamboo));
+  // floor + porch
+  const floor = new THREE.Mesh(new THREE.BoxGeometry(W + 0.1, 0.05, D + PZ + 0.06), MT.wood); floor.position.set(0, FY, PZ / 2); g.add(floor);
+  // woven walls
+  const wall = new THREE.Mesh(new THREE.BoxGeometry(W, WH, D), MT.weave); wall.position.y = FY + WH / 2 + 0.02; g.add(wall);
+  for (const x of [-W / 2, W / 2]) for (const z of [-D / 2, D / 2]) g.add(cylBetween(V(x, FY, z), V(x, FY + WH + 0.08, z), 0.03, MT.bamboo));
+  // door + windows with propped shutters
+  const door = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.4, 0.02), mats.dark); door.position.set(-0.1, FY + 0.22, D / 2 + 0.006); g.add(door);
+  for (const x of [0.33]) {
+    const w = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.15, 0.02), mats.win); w.position.set(x, FY + 0.36, D / 2 + 0.008); g.add(w);
+    const sh = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.17, 0.02), MT.weave); sh.geometry.translate(0, -0.085, 0);
+    sh.position.set(x, FY + 0.45, D / 2 + 0.02); sh.rotation.x = -0.7; g.add(sh);
   }
-  const floor = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.06, 0.95), mats.dark); floor.position.y = 0.28; g.add(floor);
-  const wall = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.5, 0.75), mats.wall); wall.position.y = 0.56; g.add(wall);
-  // wall planks lines
-  for (let k = -2; k <= 2; k++) { const ln = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.5, 0.01), mats.thatch2); ln.position.set(k * 0.21, 0.56, 0.378); g.add(ln); }
-  // layered thatch roof
-  for (let k = 0; k < 3; k++) {
-    const roof = new THREE.Mesh(new THREE.ConeGeometry(1.0 - k * 0.18, 0.32, 4), k % 2 ? mats.thatch2 : mats.thatch);
-    roof.rotation.y = Math.PI / 4; roof.scale.set(1.18, 1, 0.9); roof.position.y = 0.92 + k * 0.17; g.add(roof);
-  }
-  const ridge = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.5, 5), mats.thatch2); ridge.rotation.z = Math.PI / 2; ridge.position.y = 1.36; g.add(ridge);
-  const door = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.34, 0.02), mats.dark); door.position.set(0, 0.49, 0.38); g.add(door);
-  for (const x of [-0.33, 0.33]) { const w = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.14, 0.02), mats.win); w.position.set(x, 0.6, 0.38); g.add(w); }
-  const step = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.05, 0.22), mats.dark); step.position.set(0, 0.13, 0.58); g.add(step);
-  // lantern
-  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.5, 5), mats.dark); pole.position.set(0.62, 0.25, 0.55); g.add(pole);
-  const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), mats.win); lamp.position.set(0.62, 0.52, 0.55); lamp.scale.y = 1.3; g.add(lamp);
-  // water jar (lu)
-  const lu = new THREE.Mesh(new THREE.SphereGeometry(0.12, 9, 7), M({ color: 0x8a4b2a, flatShading: false, roughness: 0.6 })); lu.scale.y = 1.15; lu.position.set(-0.62, 0.13, 0.5); g.add(lu);
+  for (const z of [0.05]) { const w = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.14, 0.18), mats.win); w.position.set(-W / 2 - 0.006, FY + 0.36, z); g.add(w); }
+  // gable roof (ridge along x), long front slope covers the porch
+  const RY = FY + WH + 0.5, P = 0.62, front = D / 2 + PZ + 0.12, back = D / 2 + 0.2;
+  const slab = (len, sign) => {
+    const s = new THREE.Mesh(new THREE.BoxGeometry(W + 0.5, 0.08, len / Math.cos(P)), MT.thatch);
+    s.position.set(0, RY - len * Math.tan(P) / 2, sign * len / 2); s.rotation.x = sign * P; g.add(s);
+    const fr = new THREE.Mesh(new THREE.BoxGeometry(W + 0.52, 0.04, 0.08), mats.thatch2);
+    fr.position.set(0, RY - len * Math.tan(P) - 0.03, sign * (len + 0.02)); fr.rotation.x = sign * P; g.add(fr);
+  };
+  const frontLen = front, backLen = back;
+  slab(frontLen, 1); slab(backLen, -1);
+  const ridge = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, W + 0.55, 8), mats.thatch2); ridge.rotation.z = Math.PI / 2; ridge.position.y = RY + 0.02; g.add(ridge);
+  // gable ends (woven triangles)
+  const tri = new THREE.Shape(); const top = RY - (FY + WH + 0.02) - 0.04;
+  tri.moveTo(-D / 2, 0); tri.lineTo(D / 2, 0); tri.lineTo(0, top); tri.closePath();
+  for (const x of [-W / 2, W / 2]) { const m = new THREE.Mesh(new THREE.ShapeGeometry(tri), MT.weave); m.rotation.y = Math.PI / 2; m.position.set(x, FY + WH + 0.02, 0); g.add(m); }
+  // porch posts + bamboo railing, ladder gap on the right
+  const pz = D / 2 + PZ - 0.04;
+  for (const x of [-W / 2 + 0.05, W / 2 - 0.05]) g.add(cylBetween(V(x, FY, pz), V(x, RY - frontLen * Math.tan(P) + 0.05, pz), 0.03, MT.bamboo));
+  g.add(cylBetween(V(-W / 2 + 0.05, FY + 0.2, pz), V(0.15, FY + 0.2, pz), 0.02, MT.bamboo));
+  g.add(cylBetween(V(-W / 2 + 0.05, FY + 0.2, D / 2), V(-W / 2 + 0.05, FY + 0.2, pz), 0.02, MT.bamboo));
+  for (const x of [-0.45, -0.2, 0.05]) g.add(cylBetween(V(x, FY, pz), V(x, FY + 0.2, pz), 0.012, MT.bamboo));
+  // ladder
+  const lx = 0.36, l0 = V(lx - 0.1, 0, pz + 0.3), l1 = V(lx - 0.1, FY + 0.02, pz), r0 = V(lx + 0.1, 0, pz + 0.3), r1 = V(lx + 0.1, FY + 0.02, pz);
+  g.add(cylBetween(l0, l1, 0.018, MT.bamboo), cylBetween(r0, r1, 0.018, MT.bamboo));
+  for (let k = 1; k <= 3; k++) { const t = k / 4; g.add(cylBetween(l0.clone().lerp(l1, t), r0.clone().lerp(r1, t), 0.014, MT.bamboo)); }
+  // hammock (võng) on the porch
+  const hy = FY + 0.32, ha = V(-W / 2 + 0.07, hy, pz - 0.02), hb = V(-0.05, hy, D / 2 + 0.03);
+  const curve = new THREE.CatmullRomCurve3([ha, ha.clone().lerp(hb, 0.5).add(V(0, -0.2, 0)), hb]);
+  const hm = new THREE.Mesh(new THREE.TubeGeometry(curve, 16, 0.035, 6), MT.red); hm.scale.set(1, 1, 1); g.add(hm);
+  // oil lamp under the eave
+  const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 6), mats.win); lamp.position.set(0.15, FY + 0.5, pz - 0.05); lamp.scale.y = 1.3; g.add(lamp);
+  g.add(cylBetween(V(0.15, FY + 0.55, pz - 0.05), V(0.15, FY + 0.68, pz - 0.05), 0.005, mats.dark));
+  // water jar beside the ladder
+  const lu = makeLu(); lu.position.set(0.68, 0, pz + 0.25); lu.scale.setScalar(0.8); g.add(lu);
   g.rotation.y = Math.atan2(camera.position.x - controls.target.x, camera.position.z - controls.target.z) + (Math.random() - 0.5) * 0.6;
   g.userData.kind = 'house';
+  return shadowAll(g);
+}
+function makeLu() {
+  const g = new THREE.Group();
+  const prof = [[0, 0], [0.08, 0], [0.13, 0.05], [0.15, 0.13], [0.13, 0.22], [0.09, 0.27], [0.095, 0.29], [0.085, 0.29]].map(([x, y]) => new THREE.Vector2(x, y));
+  g.add(new THREE.Mesh(new THREE.LatheGeometry(prof, 14), MT.jar));
+  const lid = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.015, 14), MT.wood); lid.position.y = 0.295; g.add(lid);
+  const gao = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 6, 0, Math.PI * 2, 0, Math.PI / 2), mats.coco); gao.rotation.x = Math.PI; gao.position.set(0.02, 0.33, 0); g.add(gao);
+  g.add(cylBetween(V(0.05, 0.31, 0), V(0.13, 0.33, 0.02), 0.006, MT.bamboo));
+  g.userData.kind = 'lu';
+  return shadowAll(g);
+}
+function makeBoat() {
+  const g = new THREE.Group();
+  const L = 1.1, n = 18, pos = [], uv = [], idx = [];
+  for (let i = 0; i <= n; i++) {
+    const t = i / n, x = (t - 0.5) * L, e = Math.abs(2 * t - 1);
+    const w = 0.17 * Math.pow(Math.sin(Math.PI * t), 0.7) + 0.004, sheer = 0.11 + 0.08 * Math.pow(e, 2.4), bot = 0.035 * e * e;
+    const sec = [[x, sheer, -w], [x, bot, -w * 0.45], [x, bot, w * 0.45], [x, sheer, w]];
+    sec.forEach((p, j) => { pos.push(...p); uv.push(t * 3, j / 3); });
+  }
+  for (let i = 0; i < n; i++) for (let j = 0; j < 3; j++) { const a = i * 4 + j, b = a + 4; idx.push(a, b, a + 1, a + 1, b, b + 1); }
+  const hg = new THREE.BufferGeometry(); hg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); hg.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); hg.setIndex(idx); hg.computeVertexNormals();
+  g.add(new THREE.Mesh(hg, MT.wood));
+  for (const side of [0, 3]) {
+    const pts = []; for (let i = 0; i <= n; i++) pts.push(V(pos[(i * 4 + side) * 3], pos[(i * 4 + side) * 3 + 1], pos[(i * 4 + side) * 3 + 2]));
+    g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 24, 0.012, 5), mats.dark));
+  }
+  for (const t of [0.33, 0.66]) { const s = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.015, 0.3), MT.wood); s.position.set((t - 0.5) * L, 0.1, 0); g.add(s); }
+  g.add(cylBetween(V(-0.3, 0.06, -0.06), V(0.25, 0.13, 0.05), 0.01, MT.bamboo));
+  const blade = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.008, 0.06), MT.wood); blade.position.set(0.3, 0.135, 0.06); blade.rotation.z = 0.12; g.add(blade);
+  const hat = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.06, 14), MT.straw); hat.position.set(0.18, 0.14, -0.02); hat.rotation.z = 0.25; g.add(hat);
+  g.rotation.y = Math.random() * 6.28;
+  g.userData.kind = 'boat';
+  return shadowAll(g);
+}
+function makeBanana() {
+  const g = new THREE.Group();
+  const H0 = 0.5 + Math.random() * 0.2;
+  g.add(cylBetween(V(0, 0, 0), V(0, H0, 0), 0.05, MT.stem, 8));
+  const nL = 7;
+  for (let k = 0; k < nL; k++) {
+    const lg = new THREE.PlaneGeometry(0.17, 0.75, 1, 8);
+    lg.translate(0, 0.375, 0);
+    const p = lg.attributes.position;
+    for (let i = 0; i < p.count; i++) { const y = p.getY(i); p.setZ(i, (y * y) * 0.9 - Math.abs(p.getX(i)) * 0.25); }
+    lg.computeVertexNormals();
+    const leaf = new THREE.Mesh(lg, MT.leaf);
+    const holder = new THREE.Group(); holder.position.y = H0 - 0.02; holder.rotation.y = k / nL * Math.PI * 2 + Math.random() * 0.4;
+    leaf.rotation.x = 0.55 + Math.random() * 0.35; holder.add(leaf); g.add(holder);
+  }
+  if (Math.random() < 0.6) {
+    const bunch = new THREE.Group(); bunch.position.set(0.08, H0 - 0.1, 0);
+    for (let k = 0; k < 10; k++) { const b = new THREE.Mesh(new THREE.CapsuleGeometry(0.015, 0.05, 2, 5), new THREE.MeshStandardMaterial({ color: 0x9cc23e, roughness: 0.6 })); b.position.set(Math.cos(k * 1.3) * 0.035, -k * 0.012, Math.sin(k * 1.3) * 0.035); b.rotation.z = 0.5; bunch.add(b); }
+    const flower = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.09, 6), new THREE.MeshStandardMaterial({ color: 0x7a2048, roughness: 0.6 })); flower.position.y = -0.17; flower.rotation.x = Math.PI; bunch.add(flower);
+    g.add(bunch);
+  }
+  g.rotation.y = Math.random() * 6.28; g.scale.setScalar(0.9 + Math.random() * 0.3);
+  g.userData.kind = 'banana';
+  return shadowAll(g);
+}
+function makeNipa() {
+  const g = new THREE.Group();
+  const nF = 9 + Math.floor(Math.random() * 4);
+  for (let k = 0; k < nF; k++) {
+    const len = 0.9 + Math.random() * 0.45;
+    const fg = new THREE.PlaneGeometry(0.28, len, 1, 10); fg.translate(0, len / 2, 0);
+    const p = fg.attributes.position;
+    for (let i = 0; i < p.count; i++) { const y = p.getY(i) / len; p.setZ(i, y * y * len * 0.7); }
+    fg.computeVertexNormals();
+    const f = new THREE.Mesh(fg, MT.frond);
+    const holder = new THREE.Group(); holder.rotation.y = k / nF * Math.PI * 2 + Math.random() * 0.3;
+    f.rotation.x = 0.3 + Math.random() * 0.5; holder.add(f); g.add(holder);
+  }
+  g.add(cylBetween(V(0, 0, 0), V(0, 0.12, 0), 0.07, MT.stem, 8));
+  g.scale.setScalar(0.65 + Math.random() * 0.25);
+  g.userData.kind = 'nipa';
+  return shadowAll(g);
+}
+// cầu khỉ: bamboo monkey bridge, one segment between two points over water
+function makeMonkeyBridge(a, b) {
+  const g = new THREE.Group();
+  const d = new THREE.Vector3().subVectors(b, a); d.y = 0; d.normalize();
+  const perp = V(-d.z, 0, d.x), WY = POND + 0.28, HY = POND + 0.6;
+  for (const o of [-0.03, 0.03]) g.add(cylBetween(V(a.x + perp.x * o, WY, a.z + perp.z * o), V(b.x + perp.x * o, WY, b.z + perp.z * o), 0.022, MT.bamboo));
+  g.add(cylBetween(V(a.x + perp.x * 0.2, HY, a.z + perp.z * 0.2), V(b.x + perp.x * 0.2, HY, b.z + perp.z * 0.2), 0.016, MT.bamboo));
+  const X1 = V(b.x + perp.x * 0.28, POND - 0.17, b.z + perp.z * 0.28), X2 = V(b.x - perp.x * 0.16, HY + 0.08, b.z - perp.z * 0.16);
+  const Y1 = V(b.x - perp.x * 0.28, POND - 0.17, b.z - perp.z * 0.28), Y2 = V(b.x + perp.x * 0.22, HY + 0.08, b.z + perp.z * 0.22);
+  g.add(cylBetween(X1, X2, 0.02, MT.bamboo), cylBetween(Y1, Y2, 0.02, MT.bamboo));
+  g.userData.kind = 'plank'; g.userData.seg = { ax: a.x, az: a.z, bx: b.x, bz: b.z };
   return shadowAll(g);
 }
 let plankN = 0;
 function makePlank(x, z, dir) {
   const g = new THREE.Group();
-  const p = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.045, 0.13), mats.plank); g.add(p);
-  p.material = plankN % 2 ? mats.plank : mats.rope;
+  const p = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.045, 0.13), plankN % 2 ? mats.plank : mats.rope); g.add(p);
   if (plankN % 4 === 0) for (const sx of [-0.36, 0.36]) { const post = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.34, 5), mats.dark); post.position.set(sx, 0.02, 0); g.add(post); }
   plankN++;
   g.position.set(x, POND + 0.07, z); g.rotation.y = Math.atan2(dir.x, dir.y);
@@ -457,7 +675,7 @@ const CATALOG = {
   prop: [['barrel', 1.6], ['crate', 1.8], ['sack', 2.2], ['bucket', 1.8], ['wheelbarrow', 1.6], ['lumber', 1.4]],
   fence: [['fence', 0.72]],
 };
-const BLOCK = { tree: 0.2, palm: 0.15, bush: 0.25, house: 0.8, home: 0.7, well: 0.45, windmill: 0.6, market: 0.95, prop: 0.12, fence: 0.12 };
+const BLOCK = { field: 0.85, fishery: 0.3, bamboo: 0.3, candy: 0.6, cho: 0.95, dinh: 1.15, nipa: 0.35, banana: 0.2, lu: 0.1, boat: 0, tree: 0.2, palm: 0.15, bush: 0.25, house: 0.8, home: 0.7, well: 0.45, windmill: 0.6, market: 0.95, prop: 0.12, fence: 0.12 };
 const getters = ['getX', 'getY', 'getZ', 'getW'];
 function toFloat(geo) {
   for (const k of Object.keys(geo.attributes)) {
@@ -499,10 +717,11 @@ function loadPack() {
     inst.fl = [makeInst('Flower_3_Clump', 900, true), makeInst('Flower_4_Clump', 900, true)];
     inst.reed = makeInst('reed', 600, false);
     placePresets();
+    rebuildDetail(); spawnPeople();
     terrainDirty = true;
     done();
   };
-  const fail = err => { console.error(err); flash('Không tải được bộ asset – dùng hình đơn giản', 2500); placePresets(); done(); };
+  const fail = err => { console.error(err); flash('Không tải được bộ asset – dùng hình đơn giản', 2500); placePresets(); spawnPeople(); done(); };
   (async () => {
     const res = await fetch('assets/pack.b64.js');
     const total = +res.headers.get('content-length') || 2.95e6;
@@ -529,6 +748,365 @@ function makeAsset(kind, opts = {}) {
   return g;
 }
 
+// ================= village buildings (procedural, VTA Games) =================
+Object.assign(TX, {
+  tile: canvasTex(128, 128, (g, w, h) => {
+    g.fillStyle = '#6e2a1c'; g.fillRect(0, 0, w, h);
+    for (let y = 0; y < h; y += 16) for (let x = (y / 16) % 2 ? -8 : 0; x < w; x += 16) {
+      const gr = g.createLinearGradient(0, y, 0, y + 16); gr.addColorStop(0, '#b4553a'); gr.addColorStop(1, '#7c3222');
+      g.fillStyle = gr; g.beginPath(); g.ellipse(x + 8, y + 8, 7.5, 9, 0, 0, Math.PI * 2); g.fill();
+    }
+  }, 4, 2),
+  cloth: canvasTex(64, 64, (g, w, h) => { for (let x = 0; x < w; x += 16) { g.fillStyle = (x / 16) % 2 ? '#f2e7cf' : '#d2463a'; g.fillRect(x, 0, 16, h); } }, 2, 1),
+  net: canvasTex(64, 64, (g, w, h) => { g.clearRect(0, 0, w, h); g.strokeStyle = 'rgba(240,240,225,.9)'; g.lineWidth = 1.5; for (let k = 0; k <= w; k += 8) { g.beginPath(); g.moveTo(k, 0); g.lineTo(k, h); g.moveTo(0, k); g.lineTo(w, k); g.stroke(); } }, 3, 3),
+  brick: canvasTex(64, 64, (g, w, h) => { g.fillStyle = '#7a4a36'; g.fillRect(0, 0, w, h); for (let y = 0; y < h; y += 8) for (let x = (y / 8) % 2 ? -8 : 0; x < w; x += 16) { g.fillStyle = ['#b0603f', '#a2563a', '#bb6c48'][(x + y) % 3 | 0]; g.fillRect(x + 1, y + 1, 14, 6); } }, 1, 1),
+});
+Object.assign(MT, {
+  tile: new THREE.MeshStandardMaterial({ map: TX.tile, roughness: 0.6 }),
+  cloth: new THREE.MeshStandardMaterial({ map: TX.cloth, roughness: 0.9, side: THREE.DoubleSide }),
+  net: new THREE.MeshStandardMaterial({ map: TX.net, transparent: true, side: THREE.DoubleSide, depthWrite: false }),
+  brick: new THREE.MeshStandardMaterial({ map: TX.brick, roughness: 0.9 }),
+  redwood: CMat(0x7a2a1a, 0.55), stone: CMat(0xb9b2a2, 0.95), paddy: CMat(0x6d6a3a, 1), paddyWater: new THREE.MeshStandardMaterial({ color: 0x8fc7c0, transparent: true, opacity: 0.55, roughness: 0.1, envMap: envTex, envMapIntensity: 0.6 }),
+  rice: CMat(0x7fc43e, 0.8), dike: CMat(0x6f8a3a, 1), wok: CMat(0x2a2522, 0.4), candy: CMat(0x8a5524, 0.5), smoke: new THREE.MeshBasicMaterial({ color: 0xeeeeee, transparent: true, opacity: 0.5, depthWrite: false }),
+  fruitO: CMat(0xf29a2e, 0.5), fruitY: CMat(0xf2d23a, 0.5), fruitG: CMat(0x6ab04c, 0.5), basket: CMat(0x9b7440, 0.9), lantern: new THREE.MeshStandardMaterial({ color: 0xc0392b, emissive: 0xff5533, emissiveIntensity: 0 }),
+});
+function CMat(c, r) { return new THREE.MeshStandardMaterial({ color: c, roughness: r }); }
+function thatchShed(w, d, h, g, mat = MT.thatch) {
+  for (const x of [-w / 2, w / 2]) for (const z of [-d / 2, d / 2]) g.add(cylBetween(V(x, 0, z), V(x, h, z), 0.03, MT.bamboo));
+  const P = 0.55, half = d / 2 + 0.12;
+  for (const s of [1, -1]) { const r = new THREE.Mesh(new THREE.BoxGeometry(w + 0.3, 0.06, half / Math.cos(P)), mat); r.position.set(0, h + half * Math.tan(P) / 2, s * half / 2); r.rotation.x = s * P; g.add(r); }
+  const ridge = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, w + 0.32, 7), mats.thatch2); ridge.rotation.z = Math.PI / 2; ridge.position.y = h + half * Math.tan(P) + 0.02; g.add(ridge);
+}
+function faceCamera(g) { g.rotation.y = Math.atan2(camera.position.x - controls.target.x, camera.position.z - controls.target.z) + (Math.random() - 0.5) * 0.4; }
+
+function makeField() {
+  const g = new THREE.Group(), W = 1.5, D = 1.05;
+  const soil = new THREE.Mesh(new THREE.BoxGeometry(W, 0.05, D), MT.paddy); soil.position.y = 0.0; g.add(soil);
+  const water = new THREE.Mesh(new THREE.PlaneGeometry(W - 0.1, D - 0.1), MT.paddyWater); water.rotation.x = -Math.PI / 2; water.position.y = 0.035; g.add(water);
+  for (const [x, z, sx, sz] of [[0, D / 2, W + 0.08, 0.08], [0, -D / 2, W + 0.08, 0.08], [W / 2, 0, 0.08, D], [-W / 2, 0, 0.08, D]]) { const b = new THREE.Mesh(new THREE.BoxGeometry(sx, 0.09, sz), MT.dike); b.position.set(x, 0.03, z); g.add(b); }
+  const rg = new THREE.ConeGeometry(0.035, 0.16, 5); rg.translate(0, 0.08, 0);
+  const NX = 11, NZ = 7, rice = new THREE.InstancedMesh(rg, MT.rice.clone(), NX * NZ);
+  let k = 0; for (let i = 0; i < NX; i++) for (let j = 0; j < NZ; j++) { m4.makeTranslation(-W / 2 + 0.13 + i * (W - 0.26) / (NX - 1), 0.03, -D / 2 + 0.12 + j * (D - 0.24) / (NZ - 1)); rice.setMatrixAt(k++, m4); }
+  rice.castShadow = true; g.add(rice);
+  // bù nhìn (scarecrow)
+  const sc = new THREE.Group(); sc.position.set(W / 2 - 0.25, 0.03, -D / 2 + 0.25);
+  sc.add(cylBetween(V(0, 0, 0), V(0, 0.45, 0), 0.012, MT.bamboo), cylBetween(V(-0.13, 0.33, 0), V(0.13, 0.33, 0), 0.01, MT.bamboo));
+  const shirt = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.12, 0.05), CMat(0x4a6fa5, 0.9)); shirt.position.y = 0.3; sc.add(shirt);
+  const hd = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 6), MT.straw); hd.position.y = 0.42; sc.add(hd);
+  const hat = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.05, 12), MT.straw); hat.position.y = 0.47; sc.add(hat);
+  g.add(sc);
+  faceCamera(g);
+  g.userData = { kind: 'field', rice };
+  return shadowAll(g);
+}
+function makeFishery() {
+  const g = new THREE.Group();
+  // pier along +z out over the water
+  for (let k = 0; k < 6; k++) { const z = 0.25 + k * 0.22; for (const x of [-0.14, 0.14]) g.add(cylBetween(V(x, -0.45, z), V(x, 0.12, z), 0.022, MT.bamboo)); }
+  const deck = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.03, 1.25), MT.wood); deck.position.set(0, 0.12, 0.8); g.add(deck);
+  // chòi lá
+  const hut = new THREE.Group(); hut.position.set(0, 0, -0.2); thatchShed(0.55, 0.45, 0.42, hut); g.add(hut);
+  const bench = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.03, 0.12), MT.wood); bench.position.set(0, 0.16, -0.3); g.add(bench);
+  // cái vó: lever + crossed bamboo arcs + net
+  const lever = new THREE.Group(); lever.position.set(0.0, 0.25, 1.35); g.add(lever);
+  g.add(cylBetween(V(-0.05, 0.12, 1.35), V(0, 0.3, 1.35), 0.02, MT.bamboo), cylBetween(V(0.05, 0.12, 1.35), V(0, 0.3, 1.35), 0.02, MT.bamboo));
+  lever.add(cylBetween(V(0, 0, -0.35), V(0, 0, 0.9), 0.016, MT.bamboo));
+  const net = new THREE.Group(); net.position.set(0, 0, 0.9); lever.add(net);
+  for (const a of [0, Math.PI / 2]) {
+    const c = new THREE.CatmullRomCurve3([V(-0.4, -0.35, 0), V(-0.2, -0.1, 0), V(0, 0, 0), V(0.2, -0.1, 0), V(0.4, -0.35, 0)]);
+    const arc = new THREE.Mesh(new THREE.TubeGeometry(c, 12, 0.01, 4), MT.bamboo); arc.rotation.y = a + Math.PI / 4; net.add(arc);
+  }
+  const ng = new THREE.PlaneGeometry(0.58, 0.58, 4, 4); ng.rotateX(-Math.PI / 2);
+  const p = ng.attributes.position; for (let i = 0; i < p.count; i++) { const r = Math.hypot(p.getX(i), p.getZ(i)); p.setY(i, -0.35 - (0.3 - r) * 0.25); }
+  const netM = new THREE.Mesh(ng, MT.net); net.add(netM);
+  const rope = cylBetween(V(0, 0, 0), V(0, -0.35, 0), 0.004, mats.dark); net.add(rope);
+  // little xuồng tied to the pier
+  const boat = makeBoat(); boat.scale.setScalar(0.7); boat.rotation.y = Math.PI / 2; boat.position.set(0.42, -0.04, 0.7); g.add(boat);
+  g.userData = { kind: 'fishery', lever, boat };
+  return shadowAll(g);
+}
+function makeBamboo() {
+  const g = new THREE.Group(), n = 10 + Math.floor(Math.random() * 5);
+  const leafM = MT.frond;
+  for (let k = 0; k < n; k++) {
+    const a = Math.random() * 6.28, r = Math.random() * 0.18, h = 1.0 + Math.random() * 0.7, lean = 0.08 + Math.random() * 0.12;
+    let prev = V(Math.cos(a) * r, 0, Math.sin(a) * r);
+    for (let s = 1; s <= 4; s++) {
+      const t = s / 4, next = V(Math.cos(a) * (r + lean * t * t * 2), h * t, Math.sin(a) * (r + lean * t * t * 2));
+      g.add(cylBetween(prev, next, 0.022 * (1 - t * 0.4), MT.bamboo, 6)); prev = next;
+      if (s >= 3) for (let j = 0; j < 2; j++) {
+        const lg = new THREE.PlaneGeometry(0.16, 0.42, 1, 3); lg.translate(0, 0.21, 0);
+        const lf = new THREE.Mesh(lg, leafM); lf.position.copy(next); lf.rotation.set(0.9 + Math.random() * 0.4, a + (j - 0.5) * 1.6 + Math.random(), 0); g.add(lf);
+      }
+    }
+  }
+  g.userData = { kind: 'bamboo' };
+  return shadowAll(g);
+}
+function makeCandy() {
+  const g = new THREE.Group();
+  thatchShed(1.0, 0.7, 0.5, g);
+  const stove = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.22, 0.32), MT.brick); stove.position.set(-0.2, 0.11, 0); g.add(stove);
+  const wok = new THREE.Mesh(new THREE.SphereGeometry(0.15, 12, 6, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), MT.wok); wok.position.set(-0.2, 0.25, 0); g.add(wok);
+  const syrup = new THREE.Mesh(new THREE.CircleGeometry(0.13, 12), MT.candy); syrup.rotation.x = -Math.PI / 2; syrup.position.set(-0.2, 0.2, 0); g.add(syrup);
+  const chim = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 0.75, 8), MT.brick); chim.position.set(-0.36, 0.5, -0.12); g.add(chim);
+  const table = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.03, 0.3), MT.wood); table.position.set(0.25, 0.2, 0); g.add(table);
+  for (const x of [0.12, 0.38]) for (const z of [-0.12, 0.12]) g.add(cylBetween(V(x, 0, z), V(x, 0.2, z), 0.012, MT.wood));
+  for (let k = 0; k < 8; k++) { const c = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.02, 0.025), MT.candy); c.position.set(0.15 + (k % 4) * 0.065, 0.225, -0.06 + Math.floor(k / 4) * 0.1); g.add(c); }
+  for (let k = 0; k < 7; k++) { const c = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), MT.fruitG); c.position.set(0.55 + (k % 3) * 0.08 - 0.08, 0.06 + Math.floor(k / 3) * 0.07, 0.25 + (k % 2) * 0.05); g.add(c); }
+  const smoke = [];
+  for (let k = 0; k < 6; k++) { const s = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 5), MT.smoke.clone()); s.userData.t = k / 6; g.add(s); smoke.push(s); }
+  faceCamera(g);
+  g.userData = { kind: 'candy', smoke, chimney: V(-0.36, 0.9, -0.12) };
+  return shadowAll(g);
+}
+function makeCho() {
+  const g = new THREE.Group();
+  const fruits = [MT.fruitO, MT.fruitY, MT.fruitG, MT.red];
+  for (let s = 0; s < 3; s++) {
+    const st = new THREE.Group(); st.position.set((s - 1) * 0.62, 0, (s % 2) * 0.12); g.add(st);
+    for (const x of [-0.25, 0.25]) for (const z of [-0.2, 0.2]) st.add(cylBetween(V(x, 0, z), V(x, z < 0 ? 0.55 : 0.45, z), 0.016, MT.bamboo));
+    const can = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.52), s === 1 ? MT.thatch : MT.cloth); can.rotation.x = -Math.PI / 2 + 0.25; can.position.y = 0.52; st.add(can);
+    const tb = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.03, 0.34), MT.wood); tb.position.y = 0.2; st.add(tb);
+    for (let b = 0; b < 3; b++) {
+      const bk = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.05, 0.05, 10), MT.basket); bk.position.set(-0.15 + b * 0.15, 0.24, 0); st.add(bk);
+      const fm = fruits[(s + b) % fruits.length];
+      for (let f = 0; f < 4; f++) { const fr = new THREE.Mesh(new THREE.SphereGeometry(0.028, 6, 5), fm); fr.position.set(-0.15 + b * 0.15 + (f % 2 - 0.5) * 0.04, 0.28 + (f > 1 ? 0.02 : 0), (Math.floor(f / 2) - 0.5) * 0.04); st.add(fr); }
+    }
+    const lu = makeLu(); lu.scale.setScalar(0.5); lu.position.set(0.3, 0, 0.25); st.add(lu);
+  }
+  faceCamera(g);
+  g.userData = { kind: 'cho' };
+  return shadowAll(g);
+}
+function makeDinh() {
+  const g = new THREE.Group(), W = 1.7, D = 1.15;
+  const plat = new THREE.Mesh(new THREE.BoxGeometry(W + 0.3, 0.14, D + 0.3), MT.stone); plat.position.y = 0.07; g.add(plat);
+  for (let k = 0; k < 3; k++) { const st = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.045, 0.09), MT.stone); st.position.set(0, 0.022 + k * 0.045, D / 2 + 0.2 + (2 - k) * 0.08); g.add(st); }
+  const floor = new THREE.Mesh(new THREE.BoxGeometry(W, 0.03, D), MT.wood); floor.position.y = 0.155; g.add(floor);
+  for (const x of [-W / 2 + 0.08, -W / 6, W / 6, W / 2 - 0.08]) for (const z of [-D / 2 + 0.08, D / 2 - 0.08]) g.add(cylBetween(V(x, 0.15, z), V(x, 0.75, z), 0.04, MT.redwood, 10));
+  const back = new THREE.Mesh(new THREE.BoxGeometry(W - 0.16, 0.6, 0.04), MT.redwood); back.position.set(0, 0.45, -D / 2 + 0.08); g.add(back);
+  for (const x of [-W / 2 + 0.08, W / 2 - 0.08]) { const sd = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.6, D - 0.16), MT.wood); sd.position.set(x, 0.45, 0); g.add(sd); }
+  const altar = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.25, 0.2), MT.redwood); altar.position.set(0, 0.28, -D / 2 + 0.22); g.add(altar);
+  const insc = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.12, 0.02), CMat(0xd8a22a, 0.4)); insc.position.set(0, 0.72, D / 2 - 0.06); g.add(insc);
+  // two-tier hip roof with tiles and upturned corners (đầu đao)
+  const roof = (w, d, y, h) => {
+    const r = new THREE.Mesh(new THREE.ConeGeometry(1, h, 4, 1, true), MT.tile); r.rotation.y = Math.PI / 4; r.scale.set(w * 0.72, 1, d * 0.72); r.position.y = y + h / 2; r.material.side = THREE.DoubleSide; g.add(r);
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
+      const c = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.22, 6), MT.tile);
+      c.position.set(sx * w / 2, y + 0.06, sz * d / 2); c.rotation.set(sz * 0.9, 0, -sx * 0.9); g.add(c);
+    }
+    return r;
+  };
+  roof(W + 0.45, D + 0.45, 0.72, 0.42);
+  const mid = new THREE.Mesh(new THREE.BoxGeometry(W * 0.55, 0.14, D * 0.4), MT.redwood); mid.position.y = 1.12; g.add(mid);
+  roof(W * 0.8, D * 0.62, 1.15, 0.36);
+  const ridge = new THREE.Mesh(new THREE.BoxGeometry(W * 0.5, 0.05, 0.06), MT.tile); ridge.position.y = 1.5; g.add(ridge);
+  const pearl = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 8), CMat(0xe0b040, 0.3)); pearl.position.y = 1.55; g.add(pearl);
+  for (const x of [-0.45, 0.45]) { const l = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), MT.lantern); l.scale.y = 1.25; l.position.set(x, 0.62, D / 2 + 0.05); g.add(l); g.add(cylBetween(V(x, 0.7, D / 2 + 0.05), V(x, 0.76, D / 2 + 0.05), 0.004, mats.dark)); }
+  faceCamera(g);
+  g.userData = { kind: 'dinh' };
+  return shadowAll(g);
+}
+
+// ================= characters: người dân + husky (VTA Games) =================
+function heightSmooth(x, z) {
+  const fx = (x + SIZE / 2) / STEP, fr = zAsc ? (z + SIZE / 2) / STEP : (SIZE / 2 - z) / STEP;
+  const c = Math.floor(fx), r = Math.floor(fr), tx = fx - c, tz = fr - r;
+  if (c < 0 || c >= SEG || r < 0 || r >= SEG) return -1;
+  const i = r * COLS + c;
+  return lerp(lerp(H[i], H[i + 1], tx), lerp(H[i + COLS], H[i + COLS + 1], tx), tz);
+}
+const CM = (c, r = 0.75) => new THREE.MeshStandardMaterial({ color: c, roughness: r });
+const CHM = { skin: CM(0xf0c08a, 0.6), dark: CM(0x26221f), eye: CM(0x1a1a1a, 0.3), white: CM(0xf4f1ea), grey: CM(0x5f6875), blueEye: CM(0x5ab4ff, 0.2), pink: CM(0xe88a9a) };
+function limb(r, len, mat, x, y, z) { // pivot at top
+  const pivot = new THREE.Group(); pivot.position.set(x, y, z);
+  const m = new THREE.Mesh(new THREE.CapsuleGeometry(r, len, 3, 6), mat); m.position.y = -len / 2 - r * 0.5; pivot.add(m);
+  return pivot;
+}
+function makeVillager(shirtColor = 0x2f6fb0, pantsColor = 0x24242a, hat = true, hairLong = false) {
+  const g = new THREE.Group(), body = new THREE.Group(); g.add(body);
+  const shirt = CM(shirtColor, 0.85), pants = CM(pantsColor, 0.9);
+  const legs = [limb(0.028, 0.11, pants, -0.035, 0.155, 0), limb(0.028, 0.11, pants, 0.035, 0.155, 0)];
+  legs.forEach(l => { const foot = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.02, 0.06), CHM.dark); foot.position.set(0, -0.15, 0.012); l.add(foot); body.add(l); });
+  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.062, 0.075, 0.15, 10), shirt); torso.position.y = 0.23; body.add(torso);
+  // áo bà ba buttons + pockets
+  for (let k = 0; k < 3; k++) { const b = new THREE.Mesh(new THREE.SphereGeometry(0.006, 5, 4), CHM.white); b.position.set(0, 0.27 - k * 0.035, 0.066); body.add(b); }
+  const arms = [limb(0.022, 0.1, shirt, -0.085, 0.29, 0), limb(0.022, 0.1, shirt, 0.085, 0.29, 0)];
+  arms.forEach((a, k) => { a.rotation.z = k ? 0.12 : -0.12; const hand = new THREE.Mesh(new THREE.SphereGeometry(0.022, 7, 6), CHM.skin); hand.position.y = -0.145; a.add(hand); body.add(a); });
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.03, 6), CHM.skin); neck.position.y = 0.315; body.add(neck);
+  const head = new THREE.Group(); head.position.y = 0.375; body.add(head);
+  head.add(new THREE.Mesh(new THREE.SphereGeometry(0.068, 14, 12), CHM.skin));
+  for (const x of [-0.025, 0.025]) { const e = new THREE.Mesh(new THREE.SphereGeometry(0.009, 6, 5), CHM.eye); e.position.set(x, 0.008, 0.062); head.add(e); }
+  const cheek = new THREE.Mesh(new THREE.SphereGeometry(0.008, 5, 4), CHM.pink); cheek.position.set(0, -0.022, 0.064); cheek.scale.x = 2.2; head.add(cheek);
+  const hair = new THREE.Mesh(new THREE.SphereGeometry(0.071, 14, 10, 0, Math.PI * 2, 0, Math.PI * 0.55), CHM.dark); hair.rotation.x = -0.35; head.add(hair);
+  if (hairLong) { const tail = new THREE.Mesh(new THREE.CapsuleGeometry(0.02, 0.12, 3, 6), CHM.dark); tail.position.set(0, -0.06, -0.065); head.add(tail); }
+  if (hat) { const nl = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.075, 18), MT.straw); nl.position.y = 0.07; head.add(nl); }
+  g.traverse(o => { if (o.isMesh) { o.castShadow = true; } });
+  return { g, body, legs, arms, head };
+}
+function makeHusky() {
+  const g = new THREE.Group(), body = new THREE.Group(); g.add(body);
+  const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.05, 0.13, 4, 8), CHM.grey); torso.rotation.x = Math.PI / 2; torso.position.y = 0.13; body.add(torso);
+  const belly = new THREE.Mesh(new THREE.CapsuleGeometry(0.044, 0.12, 4, 8), CHM.white); belly.rotation.x = Math.PI / 2; belly.position.set(0, 0.115, 0.005); body.add(belly);
+  const legs = [];
+  for (const [x, z] of [[-0.03, 0.07], [0.03, 0.07], [-0.03, -0.07], [0.03, -0.07]]) { const l = limb(0.016, 0.07, CHM.white, x, 0.12, z); body.add(l); legs.push(l); }
+  const head = new THREE.Group(); head.position.set(0, 0.2, 0.12); body.add(head);
+  head.add(new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 10), CHM.grey));
+  const face = new THREE.Mesh(new THREE.SphereGeometry(0.044, 12, 10), CHM.white); face.position.set(0, -0.012, 0.016); head.add(face);
+  const snout = new THREE.Mesh(new THREE.CapsuleGeometry(0.022, 0.035, 3, 6), CHM.white); snout.rotation.x = Math.PI / 2; snout.position.set(0, -0.018, 0.058); head.add(snout);
+  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.011, 6, 5), CHM.eye); nose.position.set(0, -0.012, 0.09); head.add(nose);
+  for (const x of [-0.02, 0.02]) {
+    const e = new THREE.Mesh(new THREE.SphereGeometry(0.008, 6, 5), CHM.blueEye); e.position.set(x, 0.008, 0.045); head.add(e);
+    const ear = new THREE.Mesh(new THREE.ConeGeometry(0.018, 0.045, 4), CHM.grey); ear.position.set(x * 1.4, 0.05, -0.005); ear.rotation.z = -x * 6; head.add(ear);
+  }
+  const tail = new THREE.Group(); tail.position.set(0, 0.16, -0.11); body.add(tail);
+  const tm = new THREE.Mesh(new THREE.TorusGeometry(0.035, 0.016, 6, 10, Math.PI * 1.3), CHM.grey); tm.rotation.y = Math.PI / 2; tm.position.y = 0.03; tail.add(tm);
+  g.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  return { g, body, legs, head, tail };
+}
+// bridges are walkable: collect segments from cầu khỉ objects
+function onBridge(x, z) {
+  for (const o of objects.children) {
+    const s = o.userData.seg; if (!s) continue;
+    const dx = s.bx - s.ax, dz = s.bz - s.az, L2 = dx * dx + dz * dz || 1;
+    const t = clamp(((x - s.ax) * dx + (z - s.az) * dz) / L2);
+    if (Math.hypot(x - (s.ax + dx * t), z - (s.az + dz * t)) < 0.14) return true;
+  }
+  return false;
+}
+function groundAt(x, z) {
+  if (onBridge(x, z)) { const h = heightSmooth(x, z); return Math.max(h, POND + 0.3); }
+  return heightSmooth(x, z);
+}
+function walkable(x, z) {
+  if (x * x + z * z > 10.6 ** 2) return false;
+  if (onBridge(x, z)) return true;
+  const i = idxAt(x, z); if (i < 0) return false;
+  const h = heightSmooth(x, z);
+  if (h < 0.04) return false;
+  if (carved[i] && H[i] < base[i] - 0.03) return false;
+  if (blocked[i]) return false;
+  return true;
+}
+function makeWalker(rig, opts = {}) {
+  return { rig, x: 0, z: 0, y: 0, heading: 0, speed: 0, phase: Math.random() * 6, ...opts };
+}
+function stepWalker(w, mx, mz, maxSpeed, dt) {
+  const mag = Math.min(1, Math.hypot(mx, mz));
+  if (mag > 0.08) {
+    const nx = mx / Math.hypot(mx, mz), nz = mz / Math.hypot(mx, mz);
+    const want = Math.atan2(nx, nz);
+    let dh = want - w.heading; dh = Math.atan2(Math.sin(dh), Math.cos(dh));
+    w.heading += dh * (1 - Math.exp(-dt * 12));
+    w.speed = lerp(w.speed, maxSpeed * mag, 1 - Math.exp(-dt * 8));
+  } else w.speed = lerp(w.speed, 0, 1 - Math.exp(-dt * 10));
+  if (w.speed > 0.01) {
+    const vx = Math.sin(w.heading) * w.speed * dt, vz = Math.cos(w.heading) * w.speed * dt;
+    const stuck = !walkable(w.x, w.z);
+    if (stuck || walkable(w.x + vx, w.z + vz)) { w.x += vx; w.z += vz; }
+    else if (walkable(w.x + vx, w.z)) w.x += vx;
+    else if (walkable(w.x, w.z + vz)) w.z += vz;
+    else w.speed *= 0.5;
+  }
+  const gy = groundAt(w.x, w.z);
+  w.y = lerp(w.y, gy, 1 - Math.exp(-dt * 18));
+  w.phase += w.speed * dt * (w.quad ? 22 : 16);
+  const sw = Math.sin(w.phase) * Math.min(1, w.speed / 0.6);
+  const r = w.rig;
+  r.g.position.set(w.x, w.y - 0.01, w.z);
+  r.g.rotation.y = w.heading;
+  if (w.quad) {
+    r.legs[0].rotation.x = sw * 0.7; r.legs[3].rotation.x = sw * 0.7; r.legs[1].rotation.x = -sw * 0.7; r.legs[2].rotation.x = -sw * 0.7;
+    r.body.position.y = Math.abs(Math.sin(w.phase)) * 0.012 * Math.min(1, w.speed);
+    r.tail.rotation.z = Math.sin(performance.now() * 0.012) * 0.5;
+  } else {
+    r.legs[0].rotation.x = sw * 0.65; r.legs[1].rotation.x = -sw * 0.65;
+    r.arms[0].rotation.x = -sw * 0.55; r.arms[1].rotation.x = sw * 0.55;
+    r.body.position.y = Math.abs(Math.sin(w.phase)) * 0.014 * Math.min(1, w.speed / 0.6) + Math.sin(performance.now() * 0.002 + w.phase) * 0.002;
+  }
+}
+function findWalkableNear(x, z) {
+  for (let r = 0; r < 4; r += 0.15) for (let a = 0; a < 6.28; a += 0.5) { const px = x + Math.cos(a) * r, pz = z + Math.sin(a) * r; if (walkable(px, pz)) return [px, pz]; }
+  return [x, z];
+}
+const people = new THREE.Group(); scene.add(people);
+const player = makeWalker(makeVillager(0x2f6fb0, 0x24242a, true));
+const dog = makeWalker(makeHusky(), { quad: true });
+const npcs = [];
+[player, dog].forEach(w => people.add(w.rig.g));
+const SHIRTS = [0xf3efe4, 0x8a3a3a, 0x6a8f3a, 0x3b5f8f, 0xd9a441, 0x7d4f8f, 0xe8e2d2, 0x2f6f5f];
+function syncVillagers() {
+  const want = Math.min(pop, 18);
+  while (npcs.length < want) {
+    const k = npcs.length, w = makeWalker(makeVillager(SHIRTS[k % SHIRTS.length], k % 3 ? 0x24242a : 0x3a2c22, k % 4 !== 1, k % 2 === 0), { npc: true, wait: Math.random() * 2 });
+    const home = buildings.filter(b => b.kind === 'house'); const h = home[k % Math.max(1, home.length)];
+    const [px, pz] = findWalkableNear(h ? h.x + 0.9 : 0, h ? h.z + 0.9 : 0); w.x = px; w.z = pz; w.y = groundAt(px, pz);
+    people.add(w.rig.g); npcs.push(w);
+  }
+  while (npcs.length > want) { const w = npcs.pop(); people.remove(w.rig.g); }
+}
+function spawnPeople() {
+  [[player, 1.2, -0.2], [dog, 1.5, 0.1]].forEach(([w, x, z]) => {
+    const [px, pz] = findWalkableNear(x, z); w.x = px; w.z = pz; w.y = groundAt(px, pz); w.heading = Math.random() * 6.28;
+  });
+}
+const keys = new Set();
+addEventListener('keydown', e => { keys.add(e.key.toLowerCase()); });
+addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
+const joy = { x: 0, y: 0, id: null };
+const joyEl = document.getElementById('joy'), knob = document.getElementById('knob');
+joyEl.addEventListener('pointerdown', e => { joy.id = e.pointerId; joyEl.setPointerCapture(e.pointerId); moveJoy(e); e.stopPropagation(); });
+joyEl.addEventListener('pointermove', e => { if (e.pointerId === joy.id) moveJoy(e); });
+const endJoy = e => { if (e.pointerId !== joy.id) return; joy.id = null; joy.x = joy.y = 0; knob.style.transform = 'translate(-50%,-50%)'; };
+joyEl.addEventListener('pointerup', endJoy); joyEl.addEventListener('pointercancel', endJoy);
+function moveJoy(e) {
+  const r = joyEl.getBoundingClientRect(), R = r.width / 2;
+  let dx = e.clientX - (r.left + R), dy = e.clientY - (r.top + R); const l = Math.hypot(dx, dy);
+  if (l > R) { dx *= R / l; dy *= R / l; }
+  joy.x = dx / R; joy.y = dy / R;
+  knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+}
+const camF = new THREE.Vector3(), camR = new THREE.Vector3(), followPrev = new THREE.Vector3();
+let walkMode = false;
+function updatePeople(dt) {
+  // player input relative to camera
+  let ix = joy.x, iy = joy.y;
+  if (keys.has('w') || keys.has('arrowup')) iy -= 1; if (keys.has('s') || keys.has('arrowdown')) iy += 1;
+  if (keys.has('a') || keys.has('arrowleft')) ix -= 1; if (keys.has('d') || keys.has('arrowright')) ix += 1;
+  camera.getWorldDirection(camF); camF.y = 0; camF.normalize(); camR.crossVectors(camF, UP);
+  const run = keys.has('shift') || Math.hypot(joy.x, joy.y) > 0.92;
+  const mx = camF.x * -iy + camR.x * ix, mz = camF.z * -iy + camR.z * ix;
+  stepWalker(player, mx, mz, run ? 1.6 : 1.0, dt);
+  // husky follows, trotting around when close
+  const dx = player.x - dog.x, dz = player.z - dog.z, d = Math.hypot(dx, dz);
+  if (d > 0.55) stepWalker(dog, dx, dz, d > 1.5 ? 1.9 : 1.2, dt);
+  else stepWalker(dog, 0, 0, 0, dt);
+  if (d > 6) { dog.x = player.x - 0.4; dog.z = player.z - 0.4; }
+  // villagers wander between random spots
+  for (const n of npcs) {
+    if (n.wait > 0) { n.wait -= dt; stepWalker(n, 0, 0, 0, dt); if (n.wait <= 0) {
+      const work = buildings.filter(b => b.workers > 0 || GAME_DATA.build[b.kind].housing || b.kind === 'cho' || b.kind === 'dinh');
+      if (work.length && Math.random() < 0.75) { const b = work[Math.floor(Math.random() * work.length)], a = Math.random() * 6.28, rr = (BLOCK[b.kind] ?? 0.3) + 0.25; n.tx = b.x + Math.cos(a) * rr; n.tz = b.z + Math.sin(a) * rr; }
+      else { const a = Math.random() * 6.28, r = 0.8 + Math.random() * 2.5; n.tx = n.x + Math.cos(a) * r; n.tz = n.z + Math.sin(a) * r; }
+      n.walkT = 0;
+    } continue; }
+    const ex = n.tx - n.x, ez = n.tz - n.z, ed = Math.hypot(ex, ez);
+    n.walkT += dt;
+    if (ed < 0.15 || n.walkT > 12 || !walkable(n.tx, n.tz)) { n.wait = 1.5 + Math.random() * 4; continue; }
+    const ox = n.x; stepWalker(n, ex, ez, 0.55, dt);
+    if (Math.abs(n.x - ox) < 1e-5 && n.walkT > 1) n.wait = 1;
+  }
+  // camera follows the player in walk mode
+  if (walkMode) {
+    const tgt = new THREE.Vector3(player.x, player.y + 0.25, player.z);
+    const k = 1 - Math.exp(-dt * 6);
+    followPrev.copy(controls.target);
+    controls.target.lerp(tgt, k);
+    camera.position.add(new THREE.Vector3().subVectors(controls.target, followPrev));
+  }
+}
+
 // ================= clouds & fireflies =================
 const clouds = [];
 const cloudMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1, emissive: 0xffffff, emissiveIntensity: 0.15, flatShading: true });
@@ -548,44 +1126,65 @@ const fireflies = new THREE.Points(ffGeo, ffMat); scene.add(fireflies);
 
 // ================= tools =================
 const TOOLS = [
-  { id: 'view', icon: '👀', name: 'Xem', hint: '1 ngón xoay · 2 ngón zoom + xoay · nút bên phải để quay/zoom' },
-  { id: 'land', icon: '⛰️', name: 'Đất', hint: 'Kéo để đắp đất: ra biển thành bãi mới, kéo tiếp trên đất thành đồi' },
-  { id: 'pond', icon: '💧', name: 'Hồ', hint: 'Kéo để đào hồ – bờ đá, sậy, lá súng tự mọc' },
-  { id: 'path', icon: '〰️', name: 'Đường', hint: 'Kéo đường đất – qua nước tự bắc cầu ván' },
-  { id: 'fence', icon: '🪵', name: 'Rào', hint: 'Kéo để dựng hàng rào gỗ theo nét vẽ' },
-  { id: 'tree', icon: '🌳', name: 'Cây', hint: 'Chạm để trồng cây (sồi, phong, thông)' },
-  { id: 'palm', icon: '🌴', name: 'Dừa', hint: 'Chạm để trồng dừa' },
-  { id: 'bush', icon: '🌺', name: 'Bụi hoa', hint: 'Chạm để trồng bụi hoa' },
-  { id: 'house', icon: '🛖', name: 'Nhà lá', hint: 'Chạm để dựng nhà lá trên cọc' },
-  { id: 'home', icon: '🏡', name: 'Nhà gỗ', hint: 'Chạm để dựng nhà gỗ' },
-  { id: 'windmill', icon: '🌬️', name: 'Cối xay', hint: 'Chạm để dựng cối xay gió' },
-  { id: 'well', icon: '🪣', name: 'Giếng', hint: 'Chạm để đào giếng' },
-  { id: 'market', icon: '🏪', name: 'Chợ', hint: 'Chạm để dựng sạp chợ' },
-  { id: 'prop', icon: '🛢️', name: 'Đồ đạc', hint: 'Chạm để đặt thùng, bao, xe cút kít…' },
-  { id: 'erase', icon: '🧽', name: 'Xóa', hint: 'Chạm vào cây, nhà, rào, cầu để gỡ' },
+  { id: 'view', icon: '👀', name: 'Xem', cat: 'base', hint: '1 ngón xoay · 2 ngón zoom + xoay · chạm công trình để xem thông tin' },
+  { id: 'walk', icon: '🚶', name: 'Đi dạo', cat: 'base', hint: 'Kéo cần gạt để đi (kéo hết cỡ = chạy) · PC: WASD / mũi tên, Shift chạy' },
+  { id: 'land', icon: '⛰️', name: 'Đất', cat: 'dia', hint: 'Kéo để đắp đất: ra biển thành bãi mới, kéo tiếp thành đồi' },
+  { id: 'pond', icon: '💧', name: 'Ao', cat: 'dia', hint: 'Kéo để đào ao – bờ đá, sậy, lá súng tự mọc' },
+  { id: 'path', icon: '〰️', name: 'Đường', cat: 'dia', hint: 'Kéo đường đất – qua nước tự bắc cầu khỉ' },
+  { id: 'fence', icon: '🪵', name: 'Rào', cat: 'dia', hint: 'Kéo để dựng hàng rào gỗ theo nét vẽ' },
+  { id: 'erase', icon: '🧽', name: 'Dỡ', cat: 'dia', hint: 'Chạm công trình để dỡ – hoàn lại một nửa vật liệu' },
+  { id: 'house', icon: '🛖', name: 'Nhà lá', cat: 'nha', hint: 'Nhà cho 4 người ở – dân sẽ dọn tới khi làng vui' },
+  { id: 'lu', icon: '🏺', name: 'Lu nước', cat: 'nha', hint: 'Cấp nước cho các nhà gần đó (+hạnh phúc)' },
+  { id: 'cho', icon: '🧺', name: 'Chợ', cat: 'nha', hint: 'Bán hàng dư ra tiền, dân gần chợ vui hơn' },
+  { id: 'dinh', icon: '⛩️', name: 'Đình làng', cat: 'nha', hint: 'Nơi cúng đình, hội làng – hạnh phúc lớn cho cả vùng' },
+  { id: 'field', icon: '🌾', name: 'Ruộng', cat: 'sx', hint: 'Ruộng lúa: 2 người làm → ra gạo' },
+  { id: 'fishery', icon: '🎣', name: 'Bến cá', cat: 'sx', hint: 'Đặt sát mé nước – cất vó bắt cá (2 người làm)' },
+  { id: 'bamboo', icon: '🎋', name: 'Bụi tre', cat: 'sx', hint: 'Trồng tre lấy vật liệu cất nhà (1 người làm)' },
+  { id: 'palm', icon: '🌴', name: 'Dừa', cat: 'sx', hint: 'Cây dừa tự ra trái, không cần người làm' },
+  { id: 'candy', icon: '🍬', name: 'Lò kẹo', cat: 'sx', hint: 'Lò kẹo dừa: 3 dừa → 2 kẹo, bán ra chợ giá cao' },
+  { id: 'tree', icon: '🌳', name: 'Cây', cat: 'deco', hint: 'Cây xanh – nhà gần cây cối thì dân vui hơn' },
+  { id: 'banana', icon: '🍌', name: 'Chuối', cat: 'deco', hint: 'Trồng chuối quanh nhà' },
+  { id: 'nipa', icon: '🌿', name: 'Dừa nước', cat: 'deco', hint: 'Đẹp nhất ở mé ao, mé sông' },
+  { id: 'bush', icon: '🌺', name: 'Bụi hoa', cat: 'deco', hint: 'Bụi hoa trang trí' },
+  { id: 'prop', icon: '🛢️', name: 'Đồ đạc', cat: 'deco', hint: 'Thùng, bao, xe cút kít…' },
+  { id: 'boat', icon: '🛶', name: 'Xuồng', cat: 'deco', hint: 'Chạm xuống ao hoặc biển để thả xuồng ba lá' },
 ];
+const CATS = [['dia', '🏞️ Địa hình'], ['nha', '🏘️ Nhà'], ['sx', '🌾 Sản xuất'], ['deco', '🌺 Trang trí']];
 const DRAW_TOOLS = ['land', 'pond', 'path', 'fence'];
-const PLACE_TOOLS = ['tree', 'palm', 'bush', 'house', 'home', 'windmill', 'well', 'market', 'prop'];
-let tool = 'pond';
-const bar = document.getElementById('bar'), hint = document.getElementById('hint');
-TOOLS.forEach(t => {
-  const b = document.createElement('button');
-  b.className = 'tool'; b.dataset.id = t.id;
-  b.innerHTML = `${t.icon}<span>${t.name}</span>`;
-  b.onclick = () => setTool(t.id);
-  bar.appendChild(b);
-});
+const PLACE_TOOLS = TOOLS.filter(t => !['view', 'walk', 'erase', ...DRAW_TOOLS].includes(t.id)).map(t => t.id);
+let tool = 'view', cat = 'nha';
+const bar = document.getElementById('bar'), hint = document.getElementById('hint'), tabs = document.getElementById('tabs');
+CATS.forEach(([id, label]) => { const b = document.createElement('button'); b.className = 'tab'; b.dataset.cat = id; b.textContent = label; b.onclick = () => setCat(id); tabs.appendChild(b); });
+const RES_ICON = { money: '💰', rice: '🌾', fish: '🐟', coco: '🥥', bamboo: '🎋', candy: '🍬' };
+function costText(c) { return c ? Object.entries(c).map(([k, v]) => `${v}${RES_ICON[k]}`).join(' ') : ''; }
+function setCat(id) {
+  cat = id;
+  [...tabs.children].forEach(b => b.classList.toggle('on', b.dataset.cat === id));
+  bar.innerHTML = '';
+  TOOLS.filter(t => t.cat === 'base' || t.cat === id).forEach(t => {
+    const b = document.createElement('button');
+    b.className = 'tool'; b.dataset.id = t.id;
+    const def = GAME_DATA.build[t.id];
+    b.innerHTML = `${t.icon}<span>${t.name}</span>${def && def.cost ? `<small>${costText(def.cost)}</small>` : ''}`;
+    b.onclick = () => setTool(t.id);
+    bar.appendChild(b);
+  });
+  refreshToolStates();
+  [...bar.children].forEach(b => b.classList.toggle('on', b.dataset.id === tool));
+}
 controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_ROTATE };
 controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
 function setTool(id) {
   tool = id;
   [...bar.children].forEach(b => b.classList.toggle('on', b.dataset.id === id));
-  hint.textContent = TOOLS.find(t => t.id === id).hint;
-  const v = id === 'view';
+  const t = TOOLS.find(t => t.id === id), def = GAME_DATA.build[id];
+  hint.textContent = (def && def.cost ? `[${costText(def.cost)}] ` : '') + t.hint;
+  const v = id === 'view' || id === 'walk';
+  walkMode = id === 'walk'; document.getElementById('joy').classList.toggle('on', walkMode);
+  if (walkMode) camGoal.zoom = clamp(4.5 / camera.position.distanceTo(controls.target), 0.2, 1);
   controls.touches.ONE = v ? THREE.TOUCH.ROTATE : null;
   controls.mouseButtons.LEFT = v ? THREE.MOUSE.ROTATE : null;
 }
-setTool('pond');
 
 // camera buttons (smooth orbit / tilt / zoom)
 const camGoal = { az: 0, pol: 0, zoom: 1 };
@@ -610,38 +1209,172 @@ function stepCamera(dt) {
   off.setFromSpherical(sph); camera.position.copy(controls.target).add(off); camera.lookAt(controls.target);
 }
 
-// ================= tasks =================
-const TASKS = [
-  { id: 'land', text: 'Đắp thêm đất ra biển' }, { id: 'pond', text: 'Đào một cái hồ' }, { id: 'path', text: 'Kéo một con đường' },
-  { id: 'bridge', text: 'Bắc cầu qua hồ' }, { id: 'fence', text: 'Dựng hàng rào' }, { id: 'palm3', text: 'Trồng 3 cây dừa' },
-  { id: 'house', text: 'Dựng nhà lá hoặc nhà gỗ' }, { id: 'night', text: 'Chờ trời tối lên đèn' },
-];
+// ================= village economy (data-driven: tweak GAME_DATA) =================
+const GAME_DATA = {
+  start: { money: 250, rice: 30, fish: 0, coco: 0, bamboo: 50, candy: 0 },
+  startPop: 3,
+  eatPerPersonPerMin: 1.0,          // gạo/cá mỗi người mỗi phút
+  taxPerPersonPerMin: 1.2,          // tiền thuế mỗi người mỗi phút (nhân theo hạnh phúc)
+  immigrateEvery: 5,                // giây giữa 2 lần có người dọn tới
+  leaveBelowHappy: 25, arriveAboveHappy: 45,
+  prices: { rice: 1, fish: 2, coco: 1.5, candy: 6 },
+  sellPerMarketPerMin: 40,          // số món một chợ bán được mỗi phút
+  foodReservePerPerson: 3,
+  build: {
+    house:   { cost: { money: 30, bamboo: 20 }, housing: 4, radius: 0 },
+    lu:      { cost: { money: 10 }, water: 2.6 },
+    cho:     { cost: { money: 80, bamboo: 40 }, jobs: 2, market: 4.5, unlock: 'xom' },
+    dinh:    { cost: { money: 200, bamboo: 80 }, temple: 6, unlock: 'ap' },
+    field:   { cost: { money: 25 }, jobs: 2, cycle: 20, out: { rice: 8 } },
+    fishery: { cost: { money: 30, bamboo: 15 }, jobs: 2, cycle: 14, out: { fish: 4 }, shore: true },
+    bamboo:  { cost: { money: 15 }, jobs: 1, cycle: 16, out: { bamboo: 6 } },
+    palm:    { cost: { money: 6 }, jobs: 0, cycle: 30, out: { coco: 2 } },
+    candy:   { cost: { money: 60, bamboo: 30 }, jobs: 2, cycle: 12, in: { coco: 3 }, out: { candy: 2 }, unlock: 'xom' },
+    tree: { cost: { money: 3 }, decor: 1 }, banana: { cost: { money: 3 }, decor: 1 }, nipa: { cost: { money: 3 }, decor: 1 },
+    bush: { cost: { money: 2 }, decor: 1 }, prop: { cost: { money: 2 }, decor: 0.5 }, boat: { cost: { money: 15 }, decor: 1 },
+  },
+  ranks: [{ id: 'lang', name: 'Làng', pop: 0 }, { id: 'xom', name: 'Xóm', pop: 10 }, { id: 'ap', name: 'Ấp', pop: 25 }, { id: 'thitran', name: 'Thị trấn', pop: 50 }],
+  goals: [
+    { id: 'g_house', text: 'Cất thêm 1 nhà lá', test: () => countB('house', true) >= 1 },
+    { id: 'g_field', text: 'Làm 1 ruộng lúa', test: () => countB('field') >= 1 },
+    { id: 'g_bamboo', text: 'Trồng 1 bụi tre', test: () => countB('bamboo') >= 1 },
+    { id: 'g_fish', text: 'Dựng bến cá ở mé nước', test: () => countB('fishery') >= 1 },
+    { id: 'g_lu', text: 'Đặt lu nước gần nhà', test: () => countB('lu') >= 1 },
+    { id: 'g_xom', text: 'Đón đủ 10 dân → lên Xóm', test: () => pop >= 10 },
+    { id: 'g_cho', text: 'Mở chợ', test: () => countB('cho') >= 1 },
+    { id: 'g_candy', text: 'Mở lò kẹo dừa', test: () => countB('candy') >= 1 },
+    { id: 'g_ap', text: 'Đón đủ 25 dân → lên Ấp', test: () => pop >= 25 },
+    { id: 'g_dinh', text: 'Dựng đình làng', test: () => countB('dinh') >= 1 },
+    { id: 'g_tt', text: 'Đón đủ 50 dân → lên Thị trấn', test: () => pop >= 50 },
+  ],
+};
+const res = { ...GAME_DATA.start };
+let pop = 0, happy = 50, hungry = false, rankIdx = 0, immT = 0, leaveT = 0;
+const buildings = []; // { kind, obj, x, z, prog, workers, preset }
+const countB = (k, nonPreset) => buildings.filter(b => b.kind === k && (!nonPreset || !b.preset)).length;
+const rankUnlocked = id => !id || GAME_DATA.ranks.findIndex(r => r.id === id) <= rankIdx;
+const canAfford = c => !c || Object.entries(c).every(([k, v]) => res[k] >= v);
+const pay = (c, sign = -1, f = 1) => { if (c) for (const [k, v] of Object.entries(c)) res[k] += sign * Math.floor(v * f); };
+function registerBuilding(kind, obj, preset) {
+  if (!GAME_DATA.build[kind]) return;
+  const b = { kind, obj, x: obj.position.x, z: obj.position.z, prog: Math.random() * 0.3, workers: 0, preset };
+  obj.userData.bld = b; buildings.push(b);
+}
+function unregister(obj) { const i = buildings.findIndex(b => b.obj === obj); if (i >= 0) buildings.splice(i, 1); }
+const near = (b, kindKey) => buildings.some(o => { const r = GAME_DATA.build[o.kind][kindKey]; return r && Math.hypot(o.x - b.x, o.z - b.z) <= r && (kindKey !== 'market' || o.workers > 0); });
+function houseHappy(h) {
+  let s = 40;
+  if (!hungry) s += 20; else s -= 15;
+  if (near(h, 'water')) s += 12;
+  if (near(h, 'market')) s += 10;
+  if (near(h, 'temple')) s += 15;
+  let deco = 0; for (const o of buildings) { const d = GAME_DATA.build[o.kind].decor; if (d && Math.hypot(o.x - h.x, o.z - h.z) < 1.8) deco += d; }
+  s += Math.min(10, deco * 2);
+  return clamp(s, 0, 100);
+}
+// floating "+3 🌾" labels
+const ftLayer = document.getElementById('ft'), floaters = [];
+function floatText(txt, x, y, z, color = '#fff') {
+  const el = document.createElement('div'); el.className = 'ftx'; el.textContent = txt; el.style.color = color; ftLayer.appendChild(el);
+  floaters.push({ el, p: V(x, y, z), t: 0 });
+}
+function updateFloaters(dt) {
+  for (let i = floaters.length - 1; i >= 0; i--) {
+    const f = floaters[i]; f.t += dt; f.p.y += dt * 0.35;
+    const s = f.p.clone().project(camera);
+    f.el.style.transform = `translate(${(s.x * 0.5 + 0.5) * innerWidth}px, ${(-s.y * 0.5 + 0.5) * innerHeight}px) translate(-50%,-50%)`;
+    f.el.style.opacity = s.z < 1 ? Math.max(0, 1 - f.t / 1.8) : 0;
+    if (f.t > 1.8) { f.el.remove(); floaters.splice(i, 1); }
+  }
+}
+function simTick(dt) {
+  const G = GAME_DATA, B = G.build;
+  const housing = buildings.reduce((a, b) => a + (B[b.kind].housing || 0), 0);
+  // jobs: fill buildings in placement order
+  let free = pop;
+  for (const b of buildings) { const j = B[b.kind].jobs || 0; b.workers = Math.min(j, free); free -= b.workers; }
+  // production
+  for (const b of buildings) {
+    const d = B[b.kind]; if (!d.cycle) continue;
+    const eff = d.jobs ? b.workers / d.jobs : 1;
+    if (eff <= 0) continue;
+    if (d.in && !canAfford(d.in)) continue;
+    b.prog += dt / d.cycle * eff;
+    if (b.prog >= 1) {
+      b.prog = 0; if (d.in) pay(d.in);
+      for (const [k, v] of Object.entries(d.out)) { res[k] += v; floatText(`+${v} ${RES_ICON[k]}`, b.x, heightAt(b.x, b.z) + 0.9, b.z, '#fff7c0'); }
+    }
+  }
+  // food
+  let need = pop * G.eatPerPersonPerMin / 60 * dt;
+  const fromRice = Math.min(res.rice, need); res.rice -= fromRice; need -= fromRice;
+  const fromFish = Math.min(res.fish, need); res.fish -= fromFish; need -= fromFish;
+  hungry = need > 1e-6 && pop > 0;
+  // market sells surplus
+  const sellers = buildings.filter(b => b.kind === 'cho').reduce((a, b) => a + b.workers / B.cho.jobs, 0);
+  if (sellers > 0) {
+    let cap = G.sellPerMarketPerMin / 60 * dt * sellers;
+    const reserve = { rice: pop * G.foodReservePerPerson, fish: pop * G.foodReservePerPerson / 2, coco: countB('candy') ? 9 : 0, candy: 0 };
+    for (const k of ['candy', 'fish', 'coco', 'rice']) {
+      const amt = Math.min(cap, Math.max(0, res[k] - reserve[k])); if (amt <= 0) continue;
+      res[k] -= amt; res.money += amt * G.prices[k]; cap -= amt;
+    }
+  }
+  // tax & happiness
+  const houses = buildings.filter(b => B[b.kind].housing);
+  happy = houses.length ? houses.reduce((a, h) => a + houseHappy(h), 0) / houses.length : 50;
+  res.money += pop * G.taxPerPersonPerMin / 60 * dt * clamp(happy / 60, 0.3, 1.5);
+  // migration
+  immT += dt;
+  if (immT > G.immigrateEvery) {
+    immT = 0;
+    if (pop < housing && happy >= G.arriveAboveHappy) { pop++; const h = houses[Math.floor(Math.random() * houses.length)]; floatText('+1 👤 dọn tới', h.x, heightAt(h.x, h.z) + 1.2, h.z, '#c8ffb0'); }
+  }
+  if (happy < G.leaveBelowHappy && pop > 0) { leaveT += dt; if (leaveT > 10) { leaveT = 0; pop--; flash('Có người bỏ làng đi vì buồn 😢'); } } else leaveT = 0;
+  if (pop > housing) pop = housing;
+  // rank
+  while (rankIdx < G.ranks.length - 1 && pop >= G.ranks[rankIdx + 1].pop) { rankIdx++; flash(`🎉 Làng đã lên ${G.ranks[rankIdx].name}! Mở khóa công trình mới`, 3200); }
+  for (const k in res) res[k] = Math.max(0, res[k]);
+  updateHUD(housing);
+  checkGoals();
+  refreshToolStates();
+}
+const resEl = document.getElementById('res');
+function updateHUD(housing) {
+  const f = v => Math.floor(v);
+  resEl.innerHTML = `<b>${GAME_DATA.ranks[rankIdx].name}</b>` +
+    Object.keys(RES_ICON).map(k => `<span>${RES_ICON[k]} ${f(res[k])}</span>`).join('') +
+    `<span>👥 ${pop}/${housing}</span><span class="${happy < 40 ? 'bad' : ''}">${happy >= 70 ? '😊' : happy >= 45 ? '🙂' : '😟'} ${f(happy)}</span>${hungry ? '<span class="bad">🍚 thiếu ăn!</span>' : ''}`;
+}
+function refreshToolStates() {
+  [...bar.children].forEach(b => {
+    const d = GAME_DATA.build[b.dataset.id]; if (!d) return;
+    const locked = !rankUnlocked(d.unlock);
+    b.classList.toggle('locked', locked); b.classList.toggle('poor', !locked && !canAfford(d.cost));
+    if (locked && !b.querySelector('.lk')) { const s = document.createElement('i'); s.className = 'lk'; s.textContent = '🔒 ' + GAME_DATA.ranks.find(r => r.id === d.unlock).name; b.appendChild(s); }
+    if (!locked) b.querySelector('.lk')?.remove();
+  });
+}
+// goals panel
 const done = new Set();
 const tlist = document.getElementById('tlist'), tcount = document.getElementById('tcount');
 document.getElementById('tasks').onclick = e => e.currentTarget.classList.toggle('open');
 function renderTasks() {
-  tlist.innerHTML = TASKS.map(t => `<li class="${done.has(t.id) ? 'done' : ''}">${done.has(t.id) ? '✔' : '○'} ${t.text}</li>`).join('');
-  tcount.textContent = `${done.size}/${TASKS.length}`;
+  const G = GAME_DATA.goals, next = G.find(g => !done.has(g.id));
+  tlist.innerHTML = G.map(t => `<li class="${done.has(t.id) ? 'done' : ''}">${done.has(t.id) ? '✔' : '○'} ${t.text}</li>`).join('');
+  tcount.textContent = next ? next.text : 'Xong hết mục tiêu! 🎉';
 }
-renderTasks();
 const toastEl = document.getElementById('toast'); let toastT;
 function flash(t, ms = 1800) { toastEl.textContent = t; toastEl.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('show'), ms); }
-function complete(id) {
-  if (done.has(id)) return;
-  done.add(id); renderTasks();
-  flash('✔ ' + TASKS.find(t => t.id === id).text + (done.size === TASKS.length ? ' – xong hết rồi! 🎉' : ''), 2200);
+function checkGoals() {
+  let changed = false;
+  for (const g of GAME_DATA.goals) if (!done.has(g.id) && g.test()) { done.add(g.id); changed = true; flash('✔ ' + g.text, 2000); }
+  if (changed) renderTasks();
 }
+function checkTasks() { checkGoals(); }
 let landAdded = false;
-function checkTasks() {
-  if (landAdded) complete('land');
-  if (carved.some(v => v)) complete('pond');
-  if (paint.some(v => v)) complete('path');
-  const kinds = objects.children.filter(o => !o.userData.preset).map(o => o.userData.kind);
-  if (kinds.includes('plank')) complete('bridge');
-  if (kinds.filter(k => k === 'fence').length >= 4) complete('fence');
-  if (kinds.filter(k => k === 'palm').length >= 3) complete('palm3');
-  if (kinds.includes('house') || kinds.includes('home')) complete('house');
-}
+setCat('nha'); setTool('view'); renderTasks();
+window.__game = { res, buildings, setPop: v => { pop = v; }, setRank: v => { rankIdx = v; }, get pop() { return pop; }, get happy() { return happy; } };
 
 // ================= brushes =================
 let terrainDirty = true;
@@ -681,17 +1414,22 @@ function brushPond(x, z) {
   forEachNear(x, z, R * 1.6, i => colorAt(i));
   terrainDirty = true;
 }
-let lastPlank = null, lastFence = null; const pdir = new THREE.Vector2(1, 0);
+let lastPlank = null, lastFence = null, lastLand = null;
 function brushPath(x, z, dir) {
   const R = 0.36;
   const idx = idxAt(x, z);
   if (idx >= 0 && H[idx] < POND + 0.03 && base[idx] > 0.3) {
-    if (!lastPlank || Math.hypot(lastPlank.x - x, lastPlank.z - z) > 0.15) {
-      if (lastPlank) { pdir.lerp(new THREE.Vector2(x - lastPlank.x, z - lastPlank.z).normalize(), 0.35).normalize(); } else pdir.copy(dir);
-      const p = makePlank(x, z, pdir); objects.add(p); action.added.push(p); lastPlank = { x, z };
+    if (!lastPlank) lastPlank = lastLand ? { ...lastLand } : { x, z };
+    if (Math.hypot(lastPlank.x - x, lastPlank.z - z) > 0.45) {
+      const p = makeMonkeyBridge(V(lastPlank.x, 0, lastPlank.z), V(x, 0, z)); objects.add(p); action.added.push(p); lastPlank = { x, z };
     }
     return;
   }
+  if (lastPlank) {
+    if (Math.hypot(lastPlank.x - x, lastPlank.z - z) > 0.1) { const p = makeMonkeyBridge(V(lastPlank.x, 0, lastPlank.z), V(x, 0, z)); objects.add(p); action.added.push(p); }
+    lastPlank = null;
+  }
+  lastLand = { x, z };
   forEachNear(x, z, R, (i, d) => { if (base[i] > 0.3 && H[i] > POND + 0.02) { paint[i] = 1; H[i] = Math.min(H[i], base[i] - 0.02 * sm(R, 0, d)); } });
   forEachNear(x, z, R + STEP * 2, i => colorAt(i));
   terrainDirty = true;
@@ -721,6 +1459,7 @@ document.getElementById('undo').onclick = () => {
   const a = history.pop(); if (!a) return;
   H.set(a.H); base.set(a.base); paint.set(a.paint); carved.set(a.carved); blocked.set(a.blocked); wcol.set(a.wa);
   a.added.forEach(o => objects.remove(o)); a.removed.forEach(o => objects.add(o));
+  if (a.econ) { const { type, obj, cost } = a.econ; if (type === 'buy') { unregister(obj); pay(cost, 1); } else { buildings.push(obj.userData.bld); pay(cost, -1, 0.5); } }
   for (let i = 0; i < N; i++) colorAt(i);
   terrainDirty = true;
 };
@@ -741,7 +1480,7 @@ renderer.domElement.addEventListener('pointerdown', e => {
   downAt = { x: e.clientX, y: e.clientY };
   if (DRAW_TOOLS.includes(tool)) {
     const h = pick(e); if (!h) return;
-    drawing = true; beginAction(); lastPlank = null; lastFence = null;
+    drawing = true; beginAction(); lastPlank = null; lastFence = null; lastLand = null;
     last = h.point.clone();
     applyBrush(last.x, last.z, new THREE.Vector2(1, 0));
   }
@@ -767,29 +1506,64 @@ function endPointer(e) {
   downAt = null;
   if (moved > 10) return;
   if (tool === 'erase') return eraseAt(e);
+  if (tool === 'view') return showInfo(e);
   if (PLACE_TOOLS.includes(tool)) placeAt(e);
 }
 renderer.domElement.addEventListener('pointerup', endPointer);
 renderer.domElement.addEventListener('pointercancel', endPointer);
 renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
 
-function addObject(kind, x, z, y, animate = true) {
+function addObject(kind, x, z, y, animate = true, preset = false) {
   let o;
-  if (kind === 'house') o = makeHouse();
+  const CUSTOM = { house: makeHouse, boat: makeBoat, banana: makeBanana, nipa: makeNipa, lu: makeLu, field: makeField, fishery: makeFishery, bamboo: makeBamboo, candy: makeCandy, cho: makeCho, dinh: makeDinh };
+  if (CUSTOM[kind]) o = CUSTOM[kind]();
   else if (assetsReady && CATALOG[kind]) o = makeAsset(kind);
   else o = kind === 'tree' ? makeTree() : kind === 'palm' ? makePalm() : kind === 'bush' ? makeBush() : makeHouse();
   o.position.set(x, y - 0.02, z);
   if (animate) { o.userData.target = o.scale.x; o.scale.setScalar(0.001); o.userData.grow = 0; }
+  if (preset) o.userData.preset = true;
   objects.add(o);
-  markBlocked(x, z, BLOCK[kind] || 0.2);
+  markBlocked(x, z, BLOCK[kind] ?? 0.2);
+  registerBuilding(kind, o, preset);
   return o;
+}
+function flattenAt(x, z, r, y) {
+  forEachNear(x, z, r, (i, d) => { if (carved[i]) return; const f = sm(r, r * 0.55, d); H[i] = lerp(H[i], y, f); base[i] = H[i]; paint[i] = d < r * 0.6 ? 0 : paint[i]; });
+  forEachNear(x, z, r + STEP * 2, i => colorAt(i));
+  terrainDirty = true;
+}
+const FLAT = { house: 0.75, field: 1.05, candy: 0.75, cho: 1.1, dinh: 1.3 };
+function isWater(x, z) { const i = idxAt(x, z); if (i < 0) return true; return H[i] < 0.03 || (carved[i] && H[i] < base[i] - 0.03); }
+function shoreDir(x, z) {
+  let best = null;
+  for (let a = 0; a < 6.28; a += 0.2) for (let d = 0.4; d <= 1.5; d += 0.1) {
+    if (isWater(x + Math.sin(a) * d, z + Math.cos(a) * d)) { if (!best || d < best.d) best = { a, d }; break; }
+  }
+  return best;
 }
 function placeAt(e) {
   const h = pick(e); if (!h) return;
-  const p = h.point, i = idxAt(p.x, p.z);
-  if (i < 0 || H[i] < 0.32 || (carved[i] && H[i] < base[i] - 0.03)) { flash('Chỗ này là nước, chọn chỗ đất nha'); return; }
+  const p = h.point, i = idxAt(p.x, p.z), def = GAME_DATA.build[tool];
+  if (def && !rankUnlocked(def.unlock)) { flash(`🔒 Cần lên ${GAME_DATA.ranks.find(r => r.id === def.unlock).name} mới mở`); return; }
+  if (def && !canAfford(def.cost)) { flash(`Chưa đủ ${costText(def.cost)}`); return; }
+  const inPond = i >= 0 && carved[i] && H[i] < base[i] - 0.03, inSea = i < 0 || H[i] < 0.02;
+  let o;
   beginAction();
-  const o = addObject(tool, p.x, p.z, p.y);
+  if (tool === 'boat') {
+    if (!inPond && !inSea) { action = null; flash('Xuồng phải thả dưới nước nha anh'); return; }
+    o = addObject('boat', p.x, p.z, (inPond ? POND : 0) - 0.02);
+    o.userData.floatY = o.position.y; o.userData.pond = inPond;
+  } else {
+    if (i < 0 || H[i] < 0.32 || inPond) { action = null; flash('Chỗ này là nước, chọn chỗ đất nha'); return; }
+    if (tool === 'fishery') {
+      const sd = shoreDir(p.x, p.z); if (!sd) { action = null; flash('Bến cá phải đặt sát mé nước (ao hoặc biển)'); return; }
+      o = addObject('fishery', p.x, p.z, p.y); o.rotation.y = sd.a;
+    } else {
+      if (FLAT[tool]) flattenAt(p.x, p.z, FLAT[tool], p.y);
+      o = addObject(tool, p.x, p.z, p.y);
+    }
+  }
+  if (def) { pay(def.cost); action.econ = { type: 'buy', obj: o, cost: def.cost }; floatText('-' + costText(def.cost), p.x, p.y + 0.8, p.z, '#ffd0c0'); }
   action.added.push(o); commitAction();
   terrainDirty = true;
   checkTasks();
@@ -800,23 +1574,41 @@ function eraseAt(e) {
   let o = hit.object; while (o.parent !== objects) o = o.parent;
   beginAction();
   objects.remove(o); action.removed.push(o);
-  const k = o.userData.kind;
-  if (k !== 'plank' && k !== 'fence') markBlocked(o.position.x, o.position.z, BLOCK[k] || 0.2, 0);
+  const k = o.userData.kind, def = GAME_DATA.build[k];
+  if (o.userData.bld) { unregister(o); if (def) { pay(def.cost, 1, 0.5); action.econ = { type: 'sell', obj: o, cost: def.cost }; floatText('+' + costText(Object.fromEntries(Object.entries(def.cost).map(([a, b]) => [a, Math.floor(b / 2)]))), o.position.x, o.position.y + 0.8, o.position.z, '#c8ffb0'); } }
+  if (k !== 'plank' && k !== 'fence') markBlocked(o.position.x, o.position.z, BLOCK[k] ?? 0.2, 0);
   commitAction(); terrainDirty = true;
+}
+function showInfo(e) {
+  setRay(e);
+  const hit = ray.intersectObjects(objects.children, true)[0]; if (!hit) return;
+  let o = hit.object; while (o.parent !== objects) o = o.parent;
+  const b = o.userData.bld; if (!b) return;
+  const d = GAME_DATA.build[b.kind], name = (TOOLS.find(t => t.id === b.kind) || {}).name || b.kind;
+  let txt = name;
+  if (d.housing) txt += ` · 😊 ${Math.round(houseHappy(b))} · ${near(b, 'water') ? '💧' : '❌💧'} ${near(b, 'market') ? '🧺' : ''} ${near(b, 'temple') ? '⛩️' : ''}`;
+  if (d.jobs) txt += ` · 👷 ${b.workers}/${d.jobs}`;
+  if (d.cycle) txt += ` · ${Math.round(b.prog * 100)}% → ${costText(d.out)}`;
+  floatText(txt, b.x, o.position.y + 1.1, b.z, '#ffffff');
 }
 
 // ================= preset decoration =================
 function placePresets() {
   seed = 42;
-  const presets = ['tree', 'tree', 'tree', 'tree', 'tree', 'tree', 'tree', 'palm', 'palm', 'palm', 'bush', 'bush', 'bush', 'bush', 'bush', 'bush', 'prop', 'prop'];
+  const presets = ['tree', 'tree', 'tree', 'tree', 'palm', 'palm', 'palm', 'palm', 'banana', 'banana', 'banana', 'bush', 'bush', 'bush', 'bush', 'nipa', 'nipa', 'nipa', 'bamboo'];
   presets.forEach(kind => {
     for (let t = 0; t < 40; t++) {
-      const a = rnd() * 6.28, r = kind === 'palm' ? 5.5 + rnd() * 0.7 : kind === 'prop' ? 2 + rnd() * 2 : 3.6 + rnd() * 2.4;
+      const a = rnd() * 6.28, r = kind === 'palm' || kind === 'nipa' ? 5.4 + rnd() * 0.7 : kind === 'bamboo' ? 3 + rnd() : 3.4 + rnd() * 2.4;
       const x = Math.cos(a) * r, z = Math.sin(a) * r, i = idxAt(x, z);
-      if (i >= 0 && H[i] > 0.4 && !blocked[i]) { const o = addObject(kind, x, z, H[i], false); o.userData.preset = true; break; }
+      if (i >= 0 && H[i] > 0.4 && !blocked[i]) { addObject(kind, x, z, H[i], false, true); break; }
     }
   });
-  if (assetsReady) { const o = addObject('home', 2.6, -1.6, heightAt(2.6, -1.6), false); o.rotation.y = 0.5; o.userData.preset = true; }
+  const hx = 2.4, hz = -1.4; flattenAt(hx, hz, 0.75, heightAt(hx, hz)); const h = addObject('house', hx, hz, heightAt(hx, hz), false, true); h.rotation.y = 0.45;
+  addObject('lu', hx - 0.9, hz + 0.6, heightAt(hx - 0.9, hz + 0.6), false, true);
+  let bx = 6.6, bz = 3.2;
+  for (let r = 5; r < 10; r += 0.2) { const x = Math.cos(0.5) * r, z = Math.sin(0.5) * r; if (heightAt(x, z) < -0.2) { bx = x + 0.3; bz = z + 0.2; break; } }
+  const b = addObject('boat', bx, bz, -0.02, false, true); b.userData.floatY = -0.02; b.userData.pond = false;
+  pop = GAME_DATA.startPop;
 }
 
 // ================= day / night =================
@@ -839,7 +1631,7 @@ function applyTime() {
   seaMat.envMapIntensity = lerp(1.0, 0.35, n); pondMat.envMapIntensity = lerp(0.9, 0.4, n);
   bloom.strength = lerp(0.25, 0.9, n);
   renderer.toneMappingExposure = lerp(1.05, 1.25, n);
-  if (t > 0.75) complete('night');
+  MT.lantern.emissiveIntensity = sm(0.45, 0.75, t) * 2.5;
 }
 timeEl.addEventListener('input', applyTime);
 applyTime();
@@ -854,6 +1646,20 @@ function resize() {
 }
 addEventListener('resize', resize); resize();
 
+let simAcc = 0;
+function animateBuildings(dt, et) {
+  for (const b of buildings) {
+    const u = b.obj.userData;
+    if (u.rice) { const g = b.prog, s = 0.35 + g * 0.75; u.rice.scale.set(1, s, 1); u.rice.material.color.setHSL(lerp(0.27, 0.13, sm(0.6, 1, g)), 0.6, lerp(0.42, 0.55, g)); }
+    if (u.lever) { const w = b.workers > 0 ? 1 : 0; u.lever.rotation.x = w * (Math.sin(et * 0.8 + b.x) * 0.35 + 0.05); }
+    if (u.smoke) for (const s of u.smoke) {
+      const on = b.workers > 0 && canAfford(GAME_DATA.build.candy.in);
+      s.userData.t = (s.userData.t + dt * 0.35) % 1; const t = s.userData.t;
+      s.position.set(u.chimney.x + Math.sin(t * 6 + et) * 0.05 * t, u.chimney.y + t * 0.8, u.chimney.z);
+      s.scale.setScalar(0.6 + t * 1.8); s.material.opacity = on ? 0.45 * (1 - t) : 0;
+    }
+  }
+}
 loadPack();
 const clock = new THREE.Clock();
 let fpsAcc = 0, fpsN = 0, autoChecked = false;
@@ -880,6 +1686,8 @@ renderer.setAnimationLoop(() => {
     }
     if (u.kind === 'palm' || u.kind === 'tree') o.rotation.z = Math.sin(et * 1.2 + o.position.x * 0.7) * 0.02;
     if (u.spin) for (const f of u.spin) f.rotation.z += dt * 1.1;
+    if (u.floatY !== undefined) { o.position.y = u.floatY + Math.sin(et * 1.5 + o.position.x) * 0.012 + (u.pond ? 0 : sea.position.y); o.rotation.z = Math.sin(et * 1.1 + o.position.z) * 0.04; o.rotation.x = Math.sin(et * 0.9 + o.position.x) * 0.03; }
+    if (u.kind === 'banana' || u.kind === 'nipa') o.rotation.z = Math.sin(et * 1.4 + o.position.x * 0.9) * 0.025;
   });
   clouds.forEach(c => { c.position.x += c.userData.v * dt; if (c.position.x > 18) c.position.x = -18; });
   if (nightF > 0.01) {
@@ -890,6 +1698,10 @@ renderer.setAnimationLoop(() => {
     }
     ffGeo.attributes.position.needsUpdate = true;
   }
+  simAcc += dt; if (simAcc >= 0.25) { simTick(simAcc); simAcc = 0; syncVillagers(); }
+  animateBuildings(dt, et);
+  updateFloaters(dt);
+  updatePeople(dt);
   stepCamera(dt);
   controls.update();
   composer.render();

@@ -32,3 +32,15 @@ Một game builder trên đảo (giống Tiny Glade) mà anh Thái Anh quay vide
 5. Âm thanh: sóng, chim, dế ban đêm, tiếng đàn kìm nhẹ.
 6. Màn mở đầu VTA Games (logo chó mực).
 7. Hiệu năng điện thoại: gộp mesh, LOD cây, tắt GTAO trên máy yếu (đã có tự động).
+
+## Hướng mới (13/11/2026): quản lý làng cồn thư giãn
+Anh Thái Anh chọn: **làng cồn thư giãn** (không có thua) và **giữ kéo-vẽ tự do** (không lưới ô).
+
+- Tài nguyên: 💰 tiền, 🌾 gạo, 🐟 cá, 🥥 dừa, 🎋 tre, 🍬 kẹo dừa. Dân số 👥 và hạnh phúc 😊.
+- Nhà lá chứa 4 người. Dân dọn tới khi còn chỗ và hạnh phúc ≥ 45, bỏ đi nếu < 25.
+- Hạnh phúc từng nhà: có ăn, lu nước gần, chợ gần, đình gần, cây cối quanh nhà.
+- Sản xuất: ruộng (gạo), bến cá có vó (cá, phải sát mé nước), bụi tre (tre), dừa (tự ra trái),
+  lò kẹo dừa (3 dừa → 2 kẹo). Người làm được phân theo thứ tự xây.
+- Chợ bán hàng dư ra tiền; thuế theo số dân nhân hệ số hạnh phúc.
+- Cấp làng: Làng → Xóm (10 dân: mở chợ, lò kẹo) → Ấp (25: mở đình) → Thị trấn (50).
+- Mọi con số nằm trong `GAME_DATA` ở đầu phần kinh tế của `index.html`, chỉnh ở đó để cân bằng.
