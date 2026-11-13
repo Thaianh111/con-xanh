@@ -3,11 +3,11 @@
 Chốt ngày 13/11/2026 với anh Võ Thái Anh. Hướng game: **quản lý làng cồn miền Tây thư giãn**, xây kéo-vẽ tự do.
 
 ## GĐ 1 – Lõi chơi hoàn chỉnh (web, ~1–2 tuần)
-- [ ] Lưu / tải làng (tự lưu, tải lại khi mở game)
-- [ ] Màn mở đầu VTA Games (logo chó mực)
-- [ ] Hướng dẫn 3 bước lúc mới vào
-- [ ] Ghe thương lái tới đặt hàng, giao kịp được thưởng
-- [ ] Bóng mờ công trình trước khi đặt + nút xoay
+- [x] Lưu / tải làng (tự lưu, tải lại khi mở game)
+- [x] Màn mở đầu VTA Games (logo chó mực)
+- [x] Hướng dẫn 3 bước lúc mới vào
+- [x] Ghe thương lái tới đặt hàng, giao kịp được thưởng
+- [x] Bóng mờ công trình trước khi đặt + nút xoay
 - [ ] Cân bằng `GAME_DATA` (nhịp lên Xóm / Ấp / Thị trấn)
 
 **Qua GĐ khi:** 5 người chơi thử, đa số chơi liền 15 phút không hỏi "giờ làm gì". Gom ý kiến bằng `/playtest-report`.
