@@ -60,6 +60,8 @@
   .title b{font-size:40px;color:#2f7d4a;text-shadow:0 2px 0 #fff}.title .sub{font-size:14px;color:#4a6a3a}
   #startBtn{display:none;border:0;border-radius:999px;padding:12px 28px;font-size:17px;font-weight:800;background:#2f7d4a;color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.25);cursor:pointer}
   #startBtn.show{display:block;animation:pl 1.4s infinite}
+  .mini{border:0;background:#e9f7df;border-radius:8px;font-size:12px;padding:3px 6px;cursor:pointer}
+  .ftx.bub{background:rgba(255,253,246,.95);color:#33402c!important;text-shadow:none;font-weight:600;font-size:12px;padding:5px 9px;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.25);white-space:normal;max-width:220px;text-align:center}
   .toast{position:fixed;top:96px;left:50%;transform:translate(-50%,-20px);opacity:0;background:#2f7d4a;color:#fff;padding:8px 16px;border-radius:999px;font-size:14px;transition:.35s;pointer-events:none;white-space:nowrap}
   .toast.show{opacity:1;transform:translate(-50%,0)}
   .credit{position:fixed;right:12px;bottom:84px;font-size:10px;color:rgba(255,255,255,.9);text-shadow:0 1px 2px rgba(0,0,0,.45);pointer-events:none}
@@ -73,8 +75,9 @@
 <div class="top">
   <button class="btn" id="undo" title="Hoàn tác">↶</button>
   <button class="btn" id="hq" title="Đồ họa cao / thấp">✨</button>
+  <button class="btn" id="snd" title="Âm thanh">🔊</button>
   <div class="tasks" id="tasks">🎯 <b id="tcount"></b> ▾<ul id="tlist"></ul></div>
-  <div class="sky">☀️<input id="time" type="range" min="0" max="1" step="0.01" value="0.12">🌙</div>
+  <div class="sky"><button id="dayBtn" class="mini">⏸</button>☀️<input id="time" type="range" min="0" max="1" step="0.01" value="0.12">🌙</div>
 </div>
 <div class="res" id="res"></div>
 <div class="toast" id="toast"></div>
@@ -682,7 +685,8 @@ function makeNipa() {
   return shadowAll(g);
 }
 // cầu khỉ: bamboo monkey bridge, one segment between two points over water
-function makeMonkeyBridge(a, b) {
+function makeMonkeyBridge(a, b, st) {
+  if (st === 'plank' || (st === undefined && typeof rankIdx !== 'undefined' && rankIdx >= 2)) return makePlankBridge(a, b);
   const g = new THREE.Group();
   const d = new THREE.Vector3().subVectors(b, a); d.y = 0; d.normalize();
   const perp = V(-d.z, 0, d.x), WY = POND + 0.28, HY = POND + 0.6;
@@ -717,7 +721,7 @@ const CATALOG = {
   prop: [['barrel', 1.6], ['crate', 1.8], ['sack', 2.2], ['bucket', 1.8], ['wheelbarrow', 1.6], ['lumber', 1.4]],
   fence: [['fence', 0.72]],
 };
-const BLOCK = { field: 0.85, fishery: 0.3, bamboo: 0.3, candy: 0.6, cho: 0.95, dinh: 1.15, nipa: 0.35, banana: 0.2, lu: 0.1, boat: 0, tree: 0.2, palm: 0.15, bush: 0.25, house: 0.8, home: 0.7, well: 0.45, windmill: 0.6, market: 0.95, prop: 0.12, fence: 0.12 };
+const BLOCK = { house2: 0.85, chua: 1.1, school: 1.1, field: 0.85, fishery: 0.3, bamboo: 0.3, candy: 0.6, cho: 0.95, dinh: 1.15, nipa: 0.35, banana: 0.2, lu: 0.1, boat: 0, tree: 0.2, palm: 0.15, bush: 0.25, house: 0.8, home: 0.7, well: 0.45, windmill: 0.6, market: 0.95, prop: 0.12, fence: 0.12 };
 const getters = ['getX', 'getY', 'getZ', 'getW'];
 function toFloat(geo) {
   for (const k of Object.keys(geo.attributes)) {
@@ -952,6 +956,144 @@ function makeDinh() {
   return shadowAll(g);
 }
 
+// ================= GĐ2 models: nhà ngói, chùa, trường, thú =================
+MT.wallY = CMat(0xead08e, 0.85); MT.wallW = CMat(0xf1ece0, 0.85); MT.blue = CMat(0x3d7fb8, 0.6); MT.white = CMat(0xf6f3ea, 0.5); MT.lotus = CMat(0xf0a6b8, 0.6); MT.gold = CMat(0xe0b040, 0.35);
+function gableTileRoof(g, w, d, y, P = 0.5, over = 0.18) {
+  const half = d / 2 + over;
+  for (const s of [1, -1]) { const r = new THREE.Mesh(new THREE.BoxGeometry(w + 0.3, 0.05, half / Math.cos(P)), MT.tile); r.position.set(0, y + half * Math.tan(P) / 2, s * half / 2); r.rotation.x = s * P; g.add(r); }
+  const ry = y + half * Math.tan(P);
+  const ridge = new THREE.Mesh(new THREE.BoxGeometry(w + 0.34, 0.06, 0.08), MT.tile); ridge.position.y = ry + 0.02; g.add(ridge);
+  for (const x of [-1, 1]) { const c = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.14, 6), MT.tile); c.position.set(x * (w / 2 + 0.17), ry + 0.06, 0); c.rotation.z = -x * 0.6; g.add(c); }
+  const tri = new THREE.Shape(); tri.moveTo(-d / 2, 0); tri.lineTo(d / 2, 0); tri.lineTo(0, (d / 2) * Math.tan(P)); tri.closePath();
+  for (const x of [-w / 2, w / 2]) { const m = new THREE.Mesh(new THREE.ShapeGeometry(tri), MT.wallY); m.rotation.y = Math.PI / 2; m.position.set(x, y, 0); m.material.side = THREE.DoubleSide; g.add(m); }
+  return ry;
+}
+function hipRoof(g, w, d, y, h) {
+  const r = new THREE.Mesh(new THREE.ConeGeometry(1, h, 4, 1, true), MT.tile); r.rotation.y = Math.PI / 4; r.scale.set(w * 0.72, 1, d * 0.72); r.position.y = y + h / 2; r.material.side = THREE.DoubleSide; g.add(r);
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const c = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.2, 6), MT.tile); c.position.set(sx * w / 2, y + 0.05, sz * d / 2); c.rotation.set(sz * 0.9, 0, -sx * 0.9); g.add(c); }
+}
+function makeTileHouse() {
+  const g = new THREE.Group(), W = 1.3, D = 0.85, WH = 0.6;
+  const plat = new THREE.Mesh(new THREE.BoxGeometry(W + 0.3, 0.08, D + 0.45), MT.stone); plat.position.set(0, 0.04, 0.12); g.add(plat);
+  const wall = new THREE.Mesh(new THREE.BoxGeometry(W, WH, D), MT.wallY); wall.position.y = 0.08 + WH / 2; g.add(wall);
+  const band = new THREE.Mesh(new THREE.BoxGeometry(W + 0.01, 0.1, D + 0.01), CMat(0xb59a63, 0.9)); band.position.y = 0.13; g.add(band);
+  for (const x of [-0.3, 0, 0.3]) { const dr = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.42, 0.02), MT.redwood); dr.position.set(x, 0.3, D / 2 + 0.006); g.add(dr); }
+  for (const x of [-W / 2, W / 2]) { const wn = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.16, 0.22), mats.win); wn.position.set(x + Math.sign(x) * 0.006, 0.42, 0); g.add(wn); }
+  for (const x of [-W / 2 + 0.06, W / 2 - 0.06]) g.add(cylBetween(V(x, 0.08, D / 2 + 0.3), V(x, WH + 0.12, D / 2 + 0.3), 0.035, MT.redwood, 10));
+  gableTileRoof(g, W, D + 0.55, WH + 0.08, 0.5, 0.12);
+  // bàn thờ thiên + chậu kiểng + lu
+  g.add(cylBetween(V(0.85, 0, 0.75), V(0.85, 0.42, 0.75), 0.015, MT.redwood));
+  const alt = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.08, 0.12), MT.redwood); alt.position.set(0.85, 0.45, 0.75); g.add(alt);
+  for (const x of [-0.45, 0.45]) { const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.045, 0.08, 10), MT.jar); pot.position.set(x, 0.12, D / 2 + 0.38); g.add(pot); const pl = new THREE.Mesh(new THREE.IcosahedronGeometry(0.08, 1), mats.leaf[0]); pl.position.set(x, 0.21, D / 2 + 0.38); g.add(pl); }
+  const lu = makeLu(); lu.position.set(-0.85, 0, 0.55); lu.scale.setScalar(0.8); g.add(lu);
+  const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 6), MT.lantern); lamp.scale.y = 1.3; lamp.position.set(0, 0.62, D / 2 + 0.28); g.add(lamp);
+  faceCamera(g);
+  g.userData = { kind: 'house2' };
+  return shadowAll(g);
+}
+function makeChua() {
+  const g = new THREE.Group(), W = 1.4, D = 1.0;
+  const plat = new THREE.Mesh(new THREE.BoxGeometry(W + 0.25, 0.12, D + 0.3), MT.stone); plat.position.y = 0.06; g.add(plat);
+  const wall = new THREE.Mesh(new THREE.BoxGeometry(W, 0.55, D), MT.wallY); wall.position.y = 0.4; g.add(wall);
+  for (const x of [-0.45, -0.15, 0.15, 0.45]) g.add(cylBetween(V(x, 0.12, D / 2 + 0.1), V(x, 0.7, D / 2 + 0.1), 0.035, MT.redwood, 10));
+  const door = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.4, 0.02), MT.redwood); door.position.set(0, 0.32, D / 2 + 0.006); g.add(door);
+  hipRoof(g, W + 0.4, D + 0.45, 0.67, 0.38);
+  const mid = new THREE.Mesh(new THREE.BoxGeometry(W * 0.5, 0.12, D * 0.35), MT.wallY); mid.position.y = 1.0; g.add(mid);
+  hipRoof(g, W * 0.75, D * 0.6, 1.03, 0.3);
+  const top = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 8), MT.gold); top.position.y = 1.36; g.add(top);
+  // tháp 3 tầng
+  const tw = new THREE.Group(); tw.position.set(W / 2 + 0.45, 0, -0.1); g.add(tw);
+  let y = 0;
+  for (let k = 0; k < 3; k++) {
+    const s = 0.36 - k * 0.08, h = 0.28 - k * 0.04;
+    const b = new THREE.Mesh(new THREE.BoxGeometry(s, h, s), MT.wallY); b.position.y = y + h / 2; tw.add(b);
+    const rr = new THREE.Mesh(new THREE.ConeGeometry(s * 0.95, 0.1, 4, 1, true), MT.tile); rr.rotation.y = Math.PI / 4; rr.position.y = y + h + 0.04; rr.material.side = THREE.DoubleSide; tw.add(rr);
+    y += h + 0.06;
+  }
+  const spire = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.2, 6), MT.gold); spire.position.y = y + 0.08; tw.add(spire);
+  // tượng Quan Âm trên đài sen
+  const st = new THREE.Group(); st.position.set(-W / 2 - 0.35, 0, 0.35); g.add(st);
+  const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.15, 0.12, 12), MT.stone); ped.position.y = 0.06; st.add(ped);
+  const lotus = new THREE.Mesh(new THREE.SphereGeometry(0.13, 12, 6, 0, Math.PI * 2, 0, Math.PI / 2), MT.lotus); lotus.scale.y = 0.6; lotus.position.y = 0.12; st.add(lotus);
+  const body = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.32, 12), MT.white); body.position.y = 0.36; st.add(body);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 8), MT.white); head.position.y = 0.55; st.add(head);
+  const halo = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.008, 6, 16), MT.gold); halo.position.set(0, 0.57, -0.04); st.add(halo);
+  faceCamera(g);
+  g.userData = { kind: 'chua' };
+  return shadowAll(g);
+}
+function makeSchool() {
+  const g = new THREE.Group(), W = 1.8, D = 0.7, WH = 0.55;
+  const plat = new THREE.Mesh(new THREE.BoxGeometry(W + 0.2, 0.08, D + 0.35), MT.stone); plat.position.set(0, 0.04, 0.1); g.add(plat);
+  const wall = new THREE.Mesh(new THREE.BoxGeometry(W, WH, D), MT.wallY); wall.position.y = 0.08 + WH / 2; g.add(wall);
+  for (let k = 0; k < 5; k++) { const x = -0.7 + k * 0.35; const wn = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.02), k === 2 ? MT.redwood : MT.blue); wn.position.set(x, k === 2 ? 0.28 : 0.38, D / 2 + 0.006); if (k === 2) wn.scale.y = 2; g.add(wn); }
+  for (let k = 0; k < 4; k++) g.add(cylBetween(V(-0.8 + k * 0.53, 0.08, D / 2 + 0.22), V(-0.8 + k * 0.53, WH + 0.1, D / 2 + 0.22), 0.025, MT.white, 8));
+  gableTileRoof(g, W, D + 0.45, WH + 0.08, 0.45, 0.1);
+  // cột cờ + kẻng
+  const fx = W / 2 + 0.35, fz = 0.6;
+  g.add(cylBetween(V(fx, 0, fz), V(fx, 1.3, fz), 0.012, MT.white));
+  const flag = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.2), CMat(0xd52b1e, 0.8)); flag.position.set(fx + 0.15, 1.18, fz); flag.material.side = THREE.DoubleSide; g.add(flag);
+  const star = new THREE.Shape(); for (let k = 0; k < 10; k++) { const r = k % 2 ? 0.025 : 0.06, a = k / 10 * Math.PI * 2 + Math.PI / 2; k ? star.lineTo(Math.cos(a) * r, Math.sin(a) * r) : star.moveTo(Math.cos(a) * r, Math.sin(a) * r); }
+  const sm2 = new THREE.Mesh(new THREE.ShapeGeometry(star), CMat(0xffdd00, 0.6)); sm2.position.set(fx + 0.15, 1.18, fz + 0.002); sm2.material.side = THREE.DoubleSide; g.add(sm2);
+  g.add(cylBetween(V(-fx, 0, 0.5), V(-fx, 0.6, 0.5), 0.015, MT.redwood), cylBetween(V(-fx - 0.15, 0.6, 0.5), V(-fx + 0.15, 0.6, 0.5), 0.012, MT.redwood));
+  const bell = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.05, 0.08, 10), MT.gold); bell.position.set(-fx, 0.53, 0.5); g.add(bell);
+  const bench = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.03, 0.1), MT.wood); bench.position.set(0.5, 0.12, D / 2 + 0.6); g.add(bench);
+  faceCamera(g);
+  g.userData = { kind: 'school', flag };
+  return shadowAll(g);
+}
+function makePlankBridge(a, b) {
+  const g = new THREE.Group();
+  const d = new THREE.Vector3().subVectors(b, a); d.y = 0; const len = d.length(); d.normalize();
+  const perp = V(-d.z, 0, d.x), WY = POND + 0.24;
+  const deck = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.04, len + 0.04), MT.wood); deck.position.set((a.x + b.x) / 2, WY, (a.z + b.z) / 2); deck.rotation.y = Math.atan2(d.x, d.z); g.add(deck);
+  for (const s of [-1, 1]) {
+    const px = b.x + perp.x * 0.2 * s, pz = b.z + perp.z * 0.2 * s;
+    g.add(cylBetween(V(px, POND - 0.2, pz), V(px, WY + 0.25, pz), 0.025, MT.redwood));
+    g.add(cylBetween(V(a.x + perp.x * 0.2 * s, WY + 0.22, a.z + perp.z * 0.2 * s), V(px, WY + 0.22, pz), 0.014, MT.redwood));
+  }
+  g.userData.kind = 'plank'; g.userData.seg = { ax: a.x, az: a.z, bx: b.x, bz: b.z, st: 'plank' };
+  return shadowAll(g);
+}
+// ---- animals ----
+function makeChicken(brown) {
+  const g = new THREE.Group(), body = new THREE.Group(); g.add(body);
+  const col = brown ? CMat(0xb5652e, 0.8) : CMat(0xf5f1e6, 0.8);
+  const b = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 8), col); b.scale.set(0.9, 0.85, 1.2); b.position.y = 0.08; body.add(b);
+  const tail = new THREE.Mesh(new THREE.ConeGeometry(0.025, 0.06, 6), brown ? CMat(0x2a3a2a, 0.6) : col); tail.position.set(0, 0.11, -0.055); tail.rotation.x = -0.8; body.add(tail);
+  const head = new THREE.Group(); head.position.set(0, 0.13, 0.04); body.add(head);
+  head.add(new THREE.Mesh(new THREE.SphereGeometry(0.024, 8, 6), col));
+  const comb = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.02, 0.025), MT.red); comb.position.y = 0.025; head.add(comb);
+  const beak = new THREE.Mesh(new THREE.ConeGeometry(0.008, 0.02, 5), CMat(0xf2a33a, 0.5)); beak.rotation.x = Math.PI / 2; beak.position.set(0, -0.004, 0.026); head.add(beak);
+  const legs = [limb(0.005, 0.04, CMat(0xf2a33a, 0.5), -0.015, 0.05, 0), limb(0.005, 0.04, CMat(0xf2a33a, 0.5), 0.015, 0.05, 0)]; legs.forEach(l => body.add(l));
+  const arms = [new THREE.Group(), new THREE.Group()]; arms.forEach((a, k) => { a.position.set(k ? 0.04 : -0.04, 0.09, 0); const w = new THREE.Mesh(new THREE.SphereGeometry(0.025, 6, 5), col); w.scale.set(0.3, 0.7, 1.1); a.add(w); body.add(a); });
+  g.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  return { g, body, legs, arms, head };
+}
+function makeBuffalo() {
+  const g = new THREE.Group(), body = new THREE.Group(); g.add(body);
+  const skin = CMat(0x45454c, 0.85);
+  const t = new THREE.Mesh(new THREE.CapsuleGeometry(0.1, 0.22, 4, 10), skin); t.rotation.x = Math.PI / 2; t.position.y = 0.2; body.add(t);
+  const legs = [];
+  for (const [x, z] of [[-0.06, 0.12], [0.06, 0.12], [-0.06, -0.12], [0.06, -0.12]]) { const l = limb(0.028, 0.1, skin, x, 0.17, z); body.add(l); legs.push(l); }
+  const head = new THREE.Group(); head.position.set(0, 0.22, 0.24); body.add(head);
+  const hd = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.09, 0.13), skin); hd.rotation.x = 0.4; head.add(hd);
+  const muz = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.05, 0.05), CMat(0x2e2e33, 0.8)); muz.position.set(0, -0.04, 0.07); head.add(muz);
+  for (const s of [-1, 1]) { const h = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.012, 5, 10, Math.PI * 0.8), CMat(0xd8cfb8, 0.6)); h.position.set(s * 0.06, 0.05, -0.02); h.rotation.set(0, s > 0 ? 0 : Math.PI, 0.3); head.add(h); }
+  const tail = new THREE.Group(); tail.position.set(0, 0.24, -0.2); body.add(tail); tail.add(cylBetween(V(0, 0, 0), V(0, -0.14, -0.02), 0.008, skin));
+  g.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  return { g, body, legs, head, tail };
+}
+function makeDuck() {
+  const g = new THREE.Group();
+  const w = CMat(0xf6f3ea, 0.7);
+  const b = new THREE.Mesh(new THREE.SphereGeometry(0.04, 10, 8), w); b.scale.set(0.85, 0.7, 1.25); b.position.y = 0.02; g.add(b);
+  const hd = new THREE.Mesh(new THREE.SphereGeometry(0.022, 8, 6), w); hd.position.set(0, 0.06, 0.04); g.add(hd);
+  const bk = new THREE.Mesh(new THREE.BoxGeometry(0.018, 0.006, 0.025), CMat(0xf2a33a, 0.5)); bk.position.set(0, 0.055, 0.065); g.add(bk);
+  const tl = new THREE.Mesh(new THREE.ConeGeometry(0.015, 0.04, 5), w); tl.position.set(0, 0.04, -0.05); tl.rotation.x = -1; g.add(tl);
+  return g;
+}
+
 // ================= characters: người dân + husky (VTA Games) =================
 function heightSmooth(x, z) {
   const fx = (x + SIZE / 2) / STEP, fr = zAsc ? (z + SIZE / 2) / STEP : (SIZE / 2 - z) / STEP;
@@ -1027,7 +1169,7 @@ function walkable(x, z) {
   if (onBridge(x, z)) return true;
   const i = idxAt(x, z); if (i < 0) return false;
   const h = heightSmooth(x, z);
-  if (h < 0.04) return false;
+  if (h < 0.04 + floodAmt) return false;
   if (carved[i] && H[i] < base[i] - 0.03) return false;
   if (blocked[i]) return false;
   return true;
@@ -1083,8 +1225,8 @@ function syncVillagers() {
   const want = Math.min(pop, 18);
   while (npcs.length < want) {
     const k = npcs.length, w = makeWalker(makeVillager(SHIRTS[k % SHIRTS.length], k % 3 ? 0x24242a : 0x3a2c22, k % 4 !== 1, k % 2 === 0), { npc: true, wait: Math.random() * 2 });
-    const home = buildings.filter(b => b.kind === 'house'); const h = home[k % Math.max(1, home.length)];
-    const [px, pz] = findWalkableNear(h ? h.x + 0.9 : 0, h ? h.z + 0.9 : 0); w.x = px; w.z = pz; w.y = groundAt(px, pz);
+    const home = buildings.filter(b => GAME_DATA.build[b.kind].housing); const h = home[Math.floor(k / 3) % Math.max(1, home.length)];
+    const [px, pz] = findWalkableNear(h ? h.x + 0.9 : 0, h ? h.z + 0.9 : 0); w.x = px; w.z = pz; w.y = groundAt(px, pz); w.name = NAMES[k % NAMES.length]; w.home = h;
     people.add(w.rig.g); npcs.push(w);
   }
   while (npcs.length > want) { const w = npcs.pop(); people.remove(w.rig.g); }
@@ -1122,14 +1264,26 @@ function updatePeople(dt) {
   const mx = camF.x * -iy + camR.x * ix, mz = camF.z * -iy + camR.z * ix;
   stepWalker(player, mx, mz, run ? 1.6 : 1.0, dt);
   // husky follows, trotting around when close
-  const dx = player.x - dog.x, dz = player.z - dog.z, d = Math.hypot(dx, dz);
-  if (d > 0.55) stepWalker(dog, dx, dz, d > 1.5 ? 1.9 : 1.2, dt);
-  else stepWalker(dog, 0, 0, 0, dt);
-  if (d > 6) { dog.x = player.x - 0.4; dog.z = player.z - 0.4; }
+  const home = !walkMode && buildings.find(b => GAME_DATA.build[b.kind].housing);
+  let gx = player.x, gz = player.z, near0 = 0.55;
+  if (home) { const ry = home.obj.rotation.y; gx = home.x + Math.sin(ry) * 0.95 + 0.25; gz = home.z + Math.cos(ry) * 0.95; near0 = 0.2; }
+  const dx = gx - dog.x, dz = gz - dog.z, d = Math.hypot(dx, dz);
+  if (d > near0) { stepWalker(dog, dx, dz, d > 1.5 ? 1.9 : 1.2, dt); dog.rig.body.rotation.x = 0; }
+  else { stepWalker(dog, 0, 0, 0, dt); if (home) { dog.rig.body.rotation.x = lerp(dog.rig.body.rotation.x, -0.45, 1 - Math.exp(-dt * 5)); } }
+  if (walkMode && d > 6) { dog.x = player.x - 0.4; dog.z = player.z - 0.4; }
   // villagers wander between random spots
   for (const n of npcs) {
+    if (n.home && !buildings.includes(n.home)) n.home = buildings.find(b => GAME_DATA.build[b.kind].housing);
+    if (isNight() && n.home) {
+      if (n.inside) continue;
+      const ry = n.home.obj.rotation.y, hx = n.home.x + Math.sin(ry) * 0.8, hz = n.home.z + Math.cos(ry) * 0.8;
+      const ex = hx - n.x, ez = hz - n.z;
+      n.nightT = (n.nightT || 0) + dt;
+      if (Math.hypot(ex, ez) < 0.3 || n.nightT > 25) { n.inside = true; n.rig.g.visible = false; n.nightT = 0; continue; }
+      stepWalker(n, ex, ez, 0.6, dt); continue;
+    } else if (n.inside) { n.inside = false; n.rig.g.visible = true; n.wait = Math.random() * 3; }
     if (n.wait > 0) { n.wait -= dt; stepWalker(n, 0, 0, 0, dt); if (n.wait <= 0) {
-      const work = buildings.filter(b => b.workers > 0 || GAME_DATA.build[b.kind].housing || b.kind === 'cho' || b.kind === 'dinh');
+      const work = buildings.filter(b => b.workers > 0 || GAME_DATA.build[b.kind].housing || ['cho', 'dinh', 'chua', 'school'].includes(b.kind));
       if (work.length && Math.random() < 0.75) { const b = work[Math.floor(Math.random() * work.length)], a = Math.random() * 6.28, rr = (BLOCK[b.kind] ?? 0.3) + 0.25; n.tx = b.x + Math.cos(a) * rr; n.tz = b.z + Math.sin(a) * rr; }
       else { const a = Math.random() * 6.28, r = 0.8 + Math.random() * 2.5; n.tx = n.x + Math.cos(a) * r; n.tz = n.z + Math.sin(a) * r; }
       n.walkT = 0;
@@ -1180,6 +1334,9 @@ const TOOLS = [
   { id: 'lu', icon: '🏺', name: 'Lu nước', cat: 'nha', hint: 'Cấp nước cho các nhà gần đó (+hạnh phúc)' },
   { id: 'cho', icon: '🧺', name: 'Chợ', cat: 'nha', hint: 'Bán hàng dư ra tiền, dân gần chợ vui hơn' },
   { id: 'dinh', icon: '⛩️', name: 'Đình làng', cat: 'nha', hint: 'Nơi cúng đình, hội làng – hạnh phúc lớn cho cả vùng' },
+  { id: 'upgrade', icon: '⬆️', name: 'Lên ngói', cat: 'nha', hint: 'Chạm một nhà lá để xây lại thành nhà ngói (6 người ở)' },
+  { id: 'school', icon: '🏫', name: 'Trường', cat: 'nha', hint: 'Trường học cho con nít – nhà gần trường vui hơn' },
+  { id: 'chua', icon: '🛕', name: 'Chùa', cat: 'nha', hint: 'Chùa có tháp và tượng Quan Âm – dân đi lễ, vui hơn' },
   { id: 'field', icon: '🌾', name: 'Ruộng', cat: 'sx', hint: 'Ruộng lúa: 2 người làm → ra gạo' },
   { id: 'fishery', icon: '🎣', name: 'Bến cá', cat: 'sx', hint: 'Đặt sát mé nước – cất vó bắt cá (2 người làm)' },
   { id: 'bamboo', icon: '🎋', name: 'Bụi tre', cat: 'sx', hint: 'Trồng tre lấy vật liệu cất nhà (1 người làm)' },
@@ -1269,6 +1426,10 @@ const GAME_DATA = {
     lu:      { cost: { money: 10 }, water: 2.6 },
     cho:     { cost: { money: 80, bamboo: 40 }, jobs: 2, market: 4.5, unlock: 'xom' },
     dinh:    { cost: { money: 200, bamboo: 80 }, temple: 6, unlock: 'ap' },
+    house2:  { cost: { money: 60, bamboo: 25 }, housing: 6, unlock: 'xom' },
+    upgrade: { cost: { money: 60, bamboo: 25 }, unlock: 'xom' },
+    school:  { cost: { money: 120, bamboo: 50 }, school: 5, jobs: 1, unlock: 'xom' },
+    chua:    { cost: { money: 150, bamboo: 60 }, temple: 5, unlock: 'ap' },
     field:   { cost: { money: 25 }, jobs: 2, cycle: 20, out: { rice: 8 } },
     fishery: { cost: { money: 30, bamboo: 15 }, jobs: 2, cycle: 14, out: { fish: 4 }, shore: true },
     bamboo:  { cost: { money: 15 }, jobs: 1, cycle: 16, out: { bamboo: 6 } },
@@ -1312,6 +1473,7 @@ function houseHappy(h) {
   if (near(h, 'water')) s += 12;
   if (near(h, 'market')) s += 10;
   if (near(h, 'temple')) s += 15;
+  if (near(h, 'school')) s += 8;
   let deco = 0; for (const o of buildings) { const d = GAME_DATA.build[o.kind].decor; if (d && Math.hypot(o.x - h.x, o.z - h.z) < 1.8) deco += d; }
   s += Math.min(10, deco * 2);
   return clamp(s, 0, 100);
@@ -1324,11 +1486,12 @@ function floatText(txt, x, y, z, color = '#fff') {
 }
 function updateFloaters(dt) {
   for (let i = floaters.length - 1; i >= 0; i--) {
-    const f = floaters[i]; f.t += dt; f.p.y += dt * 0.35;
+    const f = floaters[i], dur = f.dur || 1.8; f.t += dt;
+    if (f.follow) f.p.set(f.follow.x, f.follow.y + 0.62, f.follow.z); else f.p.y += dt * 0.35;
     const s = f.p.clone().project(camera);
-    f.el.style.transform = `translate(${(s.x * 0.5 + 0.5) * innerWidth}px, ${(-s.y * 0.5 + 0.5) * innerHeight}px) translate(-50%,-50%)`;
-    f.el.style.opacity = s.z < 1 ? Math.max(0, 1 - f.t / 1.8) : 0;
-    if (f.t > 1.8) { f.el.remove(); floaters.splice(i, 1); }
+    f.el.style.transform = `translate(${(s.x * 0.5 + 0.5) * innerWidth}px, ${(-s.y * 0.5 + 0.5) * innerHeight}px) translate(-50%,${f.follow ? '-100%' : '-50%'})`;
+    f.el.style.opacity = s.z < 1 ? Math.max(0, Math.min(1, (dur - f.t) / 0.5)) : 0;
+    if (f.t > dur) { f.el.remove(); floaters.splice(i, 1); }
   }
 }
 function simTick(dt) {
@@ -1343,7 +1506,8 @@ function simTick(dt) {
     const eff = d.jobs ? b.workers / d.jobs : 1;
     if (eff <= 0) continue;
     if (d.in && !canAfford(d.in)) continue;
-    b.prog += dt / d.cycle * eff;
+    const outK = Object.keys(d.out)[0], sm2 = (seasonNow().mult[outK] ?? 1) * (isNight() && d.jobs ? GAME_DATA.day.nightProdMult : 1);
+    b.prog += dt / d.cycle * eff * sm2;
     if (b.prog >= 1) {
       b.prog = 0; if (d.in) pay(d.in);
       for (const [k, v] of Object.entries(d.out)) { res[k] += v; floatText(`+${v} ${RES_ICON[k]}`, b.x, heightAt(b.x, b.z) + 0.9, b.z, '#fff7c0'); }
@@ -1377,7 +1541,7 @@ function simTick(dt) {
   if (happy < G.leaveBelowHappy && pop > 0) { leaveT += dt; if (leaveT > 10) { leaveT = 0; pop--; flash('Có người bỏ làng đi vì buồn 😢'); } } else leaveT = 0;
   if (pop > housing) pop = housing;
   // rank
-  while (rankIdx < G.ranks.length - 1 && pop >= G.ranks[rankIdx + 1].pop) { rankIdx++; flash(`🎉 Làng đã lên ${G.ranks[rankIdx].name}! Mở khóa công trình mới`, 3200); }
+  while (rankIdx < G.ranks.length - 1 && pop >= G.ranks[rankIdx + 1].pop) { rankIdx++; flash(`🎉 Làng đã lên ${G.ranks[rankIdx].name}! Mở khóa công trình mới`, 3200); sfx('level'); }
   for (const k in res) res[k] = Math.max(0, res[k]);
   updateHUD(housing);
   checkGoals();
@@ -1389,7 +1553,7 @@ function updateHUD(housing) {
   const f = v => Math.floor(v);
   resEl.innerHTML = `<b>${GAME_DATA.ranks[rankIdx].name}</b>` +
     Object.keys(RES_ICON).map(k => `<span>${RES_ICON[k]} ${f(res[k])}</span>`).join('') +
-    `<span>👥 ${pop}/${housing}</span><span class="${happy < 40 ? 'bad' : ''}">${happy >= 70 ? '😊' : happy >= 45 ? '🙂' : '😟'} ${f(happy)}</span>${hungry ? '<span class="bad">🍚 thiếu ăn!</span>' : ''}`;
+    `<span>${isNight() ? '🌙' : '☀️'} Ngày ${clock2.day} · ${seasonNow().icon} ${seasonNow().name}</span><span>👥 ${pop}/${housing}</span><span class="${happy < 40 ? 'bad' : ''}">${happy >= 70 ? '😊' : happy >= 45 ? '🙂' : '😟'} ${f(happy)}</span>${hungry ? '<span class="bad">🍚 thiếu ăn!</span>' : ''}`;
 }
 function refreshToolStates() {
   [...bar.children].forEach(b => {
@@ -1440,7 +1604,7 @@ function saveGame() {
       objs.push({ k: u.kind, s: u.seed, x: +o.position.x.toFixed(3), y: +(u.floatY ?? o.position.y).toFixed(3), z: +o.position.z.toFixed(3), r: +o.rotation.y.toFixed(3), c: +(u.grow !== undefined && u.grow < 1 ? u.target : o.scale.x).toFixed(3), f: u.floatY !== undefined ? 1 : 0, pd: u.pond ? 1 : 0, p: u.preset ? 1 : 0 });
     }
     const A = new Uint8Array(N); for (let i = 0; i < N; i++) A[i] = Math.round(wcol[i * 4 + 3] * 255);
-    localStorage.setItem(SAVE_KEY, JSON.stringify({ v: 1, H: packF(H), B: packF(base), P: b64(paint), C: b64(carved), A: b64(A), objs, res, pop, rankIdx, done: [...done], time: +timeEl.value, tut: tutStep, landAdded }));
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ v: 1, H: packF(H), B: packF(base), P: b64(paint), C: b64(carved), A: b64(A), objs, res, pop, rankIdx, done: [...done], time: +timeEl.value, tut: tutStep, landAdded, clk: { p: clock2.phase, d: clock2.day, a: clock2.auto } }));
   } catch (e) { console.warn('save failed', e); }
 }
 function loadGame() {
@@ -1451,7 +1615,7 @@ function loadGame() {
     const A = unb64(d.A); for (let i = 0; i < N; i++) wcol[i * 4 + 3] = A[i] / 255;
     for (let i = 0; i < N; i++) colorAt(i);
     for (const o of d.objs) {
-      if (o.k === 'bridge') { const g = o.g; objects.add(makeMonkeyBridge(V(g.ax, 0, g.az), V(g.bx, 0, g.bz))); continue; }
+      if (o.k === 'bridge') { const g = o.g; objects.add(makeMonkeyBridge(V(g.ax, 0, g.az), V(g.bx, 0, g.bz), g.st || 'monkey')); continue; }
       if (o.k === 'fence') { if (!assetsReady) continue; const f = withSeed(o.s, () => makeAsset('fence')); f.userData.seed = o.s; f.position.set(o.x, o.y, o.z); f.rotation.y = o.r; f.scale.setScalar(o.c); objects.add(f); continue; }
       const ob = addObject(o.k, o.x, o.z, o.y + 0.02, false, !!o.p, o.s);
       ob.rotation.y = o.r; ob.scale.setScalar(o.c);
@@ -1459,6 +1623,7 @@ function loadGame() {
     }
     Object.assign(res, d.res); pop = d.pop; rankIdx = d.rankIdx; d.done.forEach(id => done.add(id));
     timeEl.value = d.time; applyTime(); tutStep = d.tut ?? 3; landAdded = !!d.landAdded;
+    if (d.clk) { clock2.phase = d.clk.p; clock2.day = d.clk.d; clock2.auto = d.clk.a; document.getElementById('dayBtn').textContent = clock2.auto ? '⏸' : '▶'; lastSeason = seasonNow(); }
     renderTasks(); terrainDirty = true;
     return true;
   } catch (e) { console.warn('load failed', e); return false; }
@@ -1575,12 +1740,12 @@ orderEl.querySelector('button').onclick = () => {
   const { k, amt, pay: p } = tr.order; if (res[k] < amt) return;
   res[k] -= amt; res.money += p;
   floatText(`+${p} 💰`, tr.obj.position.x, 1.2, tr.obj.position.z, '#fff7c0');
-  flash(`Thương lái vui vẻ trả ${p}💰 – hẹn lần sau!`, 2500);
+  flash(`Thương lái vui vẻ trả ${p}💰 – hẹn lần sau!`, 2500); sfx('coin');
   tr.state = 'leave'; tr.k = 0; tr.order = null; renderOrder(); saveSoon();
 };
 
 // ================= GĐ1: ghost placement =================
-const GHOST_KINDS = ['house', 'lu', 'cho', 'dinh', 'field', 'fishery', 'bamboo', 'candy'];
+const GHOST_KINDS = ['school', 'chua', 'house', 'lu', 'cho', 'dinh', 'field', 'fishery', 'bamboo', 'candy'];
 const ghostMat = new THREE.MeshStandardMaterial({ color: 0x66ff88, transparent: true, opacity: 0.45, depthWrite: false, emissive: 0x115522 });
 const ghost = { obj: null, kind: null, seed: 0, p: null, ry: 0 };
 const gbtn = document.getElementById('gbtn');
@@ -1622,10 +1787,215 @@ addEventListener('keydown', e => { if (!ghost.obj) return; if (e.key === 'r' || 
 let introReady = false, packReady = false;
 setTimeout(() => { document.getElementById('studio').classList.add('hide'); document.getElementById('title').classList.add('show'); introReady = true; maybeStart(); }, 2200);
 function maybeStart() { if (introReady && packReady) document.getElementById('startBtn').classList.add('show'); }
-document.getElementById('startBtn').onclick = () => { const l = document.getElementById('load'); l.style.opacity = 0; setTimeout(() => l.remove(), 700); };
+document.getElementById('startBtn').onclick = () => { initAudio(); bindDayUI(); const l = document.getElementById('load'); l.style.opacity = 0; setTimeout(() => l.remove(), 700); };
+
+// ================= GĐ2: day cycle, seasons, weather =================
+GAME_DATA.day = { length: 240, nightProdMult: 0.5, autoStart: true };
+GAME_DATA.seasons = [
+  { id: 'kho', name: 'Mùa khô', icon: '☀️', days: 3, mult: { rice: 1.3, fish: 0.8 }, rain: 0.12, flood: 0 },
+  { id: 'mua', name: 'Mùa mưa', icon: '🌧️', days: 2, mult: { rice: 1.1, fish: 1.0, bamboo: 1.3 }, rain: 0.75, flood: 0.04 },
+  { id: 'nuocnoi', name: 'Mùa nước nổi', icon: '🌊', days: 2, mult: { rice: 0.5, fish: 1.9 }, rain: 0.35, flood: 0.13 },
+];
+const clock2 = { phase: 0.12, day: 1, auto: GAME_DATA.day.autoStart };
+let rainTarget = 0, rainAmt = 0, floodAmt = 0, rainbowT = 0, rainLeft = 0;
+function seasonNow() {
+  const S = GAME_DATA.seasons, year = S.reduce((a, s) => a + s.days, 0);
+  let d = (clock2.day - 1) % year; for (const s of S) { if (d < s.days) return s; d -= s.days; } return S[0];
+}
+const isNight = () => +timeEl.value > 0.6;
+function phaseToT(p) {
+  if (p < 0.08) return lerp(0.62, 0.05, p / 0.08);
+  if (p < 0.55) return 0.05 + (p - 0.08) / 0.47 * 0.2;
+  if (p < 0.68) return lerp(0.25, 0.86, (p - 0.55) / 0.13);
+  return 0.86 + (p - 0.68) / 0.32 * 0.09;
+}
+function bindDayUI() { timeEl.addEventListener('input', () => { if (clock2.auto) { clock2.auto = false; document.getElementById('dayBtn').textContent = '▶'; flash('Đã dừng giờ – bấm ▶ cạnh mặt trời để trời tự chạy', 2500); } }); }
+document.getElementById('dayBtn').onclick = () => { clock2.auto = !clock2.auto; document.getElementById('dayBtn').textContent = clock2.auto ? '⏸' : '▶'; };
+function updateDay(dt) {
+  if (clock2.auto) {
+    clock2.phase += dt / GAME_DATA.day.length;
+    if (clock2.phase >= 1) {
+      clock2.phase -= 1; clock2.day++;
+      const s = seasonNow(); if (s !== lastSeason) { flash(`${s.icon} Đã sang ${s.name}!`, 3000); lastSeason = s; sfx('level'); }
+      if (Math.random() < s.rain) { rainLeft = 40 + Math.random() * 60; }
+      saveSoon();
+    }
+    timeEl.value = phaseToT(clock2.phase);
+  }
+  const s = seasonNow();
+  if (rainLeft > 0) { rainLeft -= dt; rainTarget = 1; if (rainLeft <= 0) { rainTarget = 0; if (!isNight()) rainbowT = 30; } }
+  else if (clock2.auto && Math.random() < dt * s.rain / 200) rainLeft = 25 + Math.random() * 40;
+  rainAmt = lerp(rainAmt, rainTarget, 1 - Math.exp(-dt * 0.5));
+  floodAmt = lerp(floodAmt, s.flood, 1 - Math.exp(-dt * 0.08));
+}
+let lastSeason = null; lastSeason = seasonNow();
+// rain particles
+const RAIN = 900, rainGeo = new THREE.BufferGeometry(), rainPos = new Float32Array(RAIN * 6);
+for (let k = 0; k < RAIN; k++) { const x = (Math.random() - 0.5) * 18, y = Math.random() * 9, z = (Math.random() - 0.5) * 18; rainPos.set([x, y, z, x + 0.03, y - 0.25, z], k * 6); }
+rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
+const rainMat = new THREE.LineBasicMaterial({ color: 0x9fb4cc, transparent: true, opacity: 0, depthWrite: false });
+const rain = new THREE.LineSegments(rainGeo, rainMat); rain.frustumCulled = false; scene.add(rain);
+// rainbow
+const rainbow = new THREE.Group(); scene.add(rainbow);
+['#ff4d4d', '#ff9f3a', '#ffe14d', '#5fd35f', '#4db8ff', '#4d6bff', '#a64dff'].forEach((c, k) => {
+  const m = new THREE.Mesh(new THREE.TorusGeometry(4.8 - k * 0.13, 0.065, 6, 48, Math.PI), new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0, depthWrite: false, fog: false }));
+  rainbow.add(m);
+});
+function updateWeather(dt) {
+  applyTime();
+  rainMat.opacity = rainAmt * 0.8; rain.visible = rainAmt > 0.02;
+  if (rain.visible) {
+    rain.position.set(controls.target.x, 0, controls.target.z);
+    for (let k = 0; k < RAIN; k++) { const o = k * 6; let y = rainPos[o + 1] - dt * 9; if (y < 0) y += 9; rainPos[o + 1] = y; rainPos[o + 4] = y - 0.25; }
+    rainGeo.attributes.position.needsUpdate = true;
+  }
+  // darker sky while raining
+  const grey = rainAmt * 0.45;
+  scene.background.lerp(new THREE.Color(0x6f7f8f), grey * (1 - nightF)); scene.fog.color.copy(scene.background);
+  sun.intensity *= 1 - grey * 0.7; cloudMat.color.setScalar(1 - grey * 0.5);
+  // flood: water rises
+  sea.position.y += floodAmt; foam.position.y += floodAmt; pondWater.position.y = POND + floodAmt * 0.5 + Math.sin(performance.now() * 0.0014) * 0.006;
+  // rainbow
+  if (rainbowT > 0) {
+    rainbowT -= dt;
+    const a = Math.min(1, Math.min(30 - rainbowT, rainbowT) / 5) * 0.45;
+    camera.getWorldDirection(camF); camF.y = 0; camF.normalize();
+    rainbow.position.set(controls.target.x + camF.x * 7.5, -0.8, controls.target.z + camF.z * 7.5);
+    rainbow.lookAt(camera.position.x, -0.8, camera.position.z);
+    rainbow.children.forEach(m => m.material.opacity = a);
+  } else rainbow.children.forEach(m => m.material.opacity = 0);
+}
+
+// ================= GĐ2: animals =================
+const animals = new THREE.Group(); scene.add(animals);
+const chickens = [], buffaloes = [], ducks = [];
+function syncAnimals() {
+  const houses = buildings.filter(b => GAME_DATA.build[b.kind].housing), fields = buildings.filter(b => b.kind === 'field');
+  const wantC = Math.min(houses.length * 2, 16), wantB = Math.min(fields.length, 4);
+  while (chickens.length < wantC) { const k = chickens.length, h = houses[Math.floor(k / 2)]; const w = makeWalker(makeChicken(k % 3 === 0), { home: h, wait: Math.random() * 3 }); const [x, z] = findWalkableNear(h.x + 0.8, h.z + 0.6); w.x = x; w.z = z; w.y = groundAt(x, z); animals.add(w.rig.g); chickens.push(w); }
+  while (chickens.length > wantC) animals.remove(chickens.pop().rig.g);
+  while (buffaloes.length < wantB) { const f = fields[buffaloes.length]; const w = makeWalker(makeBuffalo(), { quad: true, home: f, wait: 2 }); const [x, z] = findWalkableNear(f.x + 1.1, f.z); w.x = x; w.z = z; w.y = groundAt(x, z); animals.add(w.rig.g); buffaloes.push(w); }
+  while (buffaloes.length > wantB) animals.remove(buffaloes.pop().rig.g);
+  // ducks: on ponds (carved water) – a few per island
+  let pondPts = []; for (let i = 0; i < N; i += 7) if (carved[i] && H[i] < POND - 0.08) pondPts.push(i);
+  const wantD = Math.min(Math.floor(pondPts.length / 25), 8);
+  while (ducks.length < wantD) { const i = pondPts[Math.floor(Math.random() * pondPts.length)]; const g = makeDuck(); g.position.set(X[i], POND, Z[i]); animals.add(g); ducks.push({ g, tx: X[i], tz: Z[i], h: Math.random() * 6 }); }
+  while (ducks.length > wantD) animals.remove(ducks.pop().g);
+}
+const inPondWater = (x, z) => { const i = idxAt(x, z); return i >= 0 && carved[i] && H[i] < POND - 0.05; };
+function wander(w, homeX, homeZ, radius, speed, dt) {
+  if (w.wait > 0) { w.wait -= dt; stepWalker(w, 0, 0, 0, dt); if (w.wait <= 0) { const a = Math.random() * 6.28, r = Math.random() * radius; w.tx = homeX + Math.cos(a) * r; w.tz = homeZ + Math.sin(a) * r; w.walkT = 0; } return; }
+  const ex = w.tx - w.x, ez = w.tz - w.z, ed = Math.hypot(ex, ez); w.walkT += dt;
+  if (ed < 0.1 || w.walkT > 8 || !walkable(w.tx, w.tz)) { w.wait = 1 + Math.random() * 4; return; }
+  stepWalker(w, ex, ez, speed, dt);
+}
+function updateAnimals(dt, et) {
+  for (const c of chickens) {
+    if (!c.home || !buildings.includes(c.home)) continue;
+    c.rig.g.visible = !isNight();
+    wander(c, c.home.x + 0.7, c.home.z + 0.5, 1.1, 0.45, dt);
+    if (c.wait > 0) c.rig.head.rotation.x = Math.max(0, Math.sin(et * 7 + c.phase)) * 1.1; else c.rig.head.rotation.x = 0;
+  }
+  for (const b of buffaloes) { if (!buildings.includes(b.home)) continue; wander(b, b.home.x, b.home.z, 1.6, 0.25, dt); b.rig.head.rotation.x = b.wait > 0 ? 0.5 : 0; }
+  for (const d of ducks) {
+    const dx = d.tx - d.g.position.x, dz = d.tz - d.g.position.z, dd = Math.hypot(dx, dz);
+    if (dd < 0.05 || !inPondWater(d.tx, d.tz)) { const a = Math.random() * 6.28; const nx = d.g.position.x + Math.cos(a) * 0.6, nz = d.g.position.z + Math.sin(a) * 0.6; if (inPondWater(nx, nz)) { d.tx = nx; d.tz = nz; } }
+    else { d.g.position.x += dx / dd * dt * 0.18; d.g.position.z += dz / dd * dt * 0.18; d.g.rotation.y = Math.atan2(dx, dz); }
+    d.g.position.y = pondWater.position.y - 0.01 + Math.sin(et * 2 + d.h) * 0.004;
+  }
+}
+
+// ================= GĐ2: villagers with names & wishes =================
+const NAMES = ['Ba Lụa', 'Tư Hùng', 'Út Mai', 'Bảy Đen', 'Sáu Lan', 'Năm Lợi', 'Hai Thắng', 'Chín Hoa', 'Tám Sang', 'Út Nhỏ', 'Mười Bé', 'Ba Phước', 'Tư Thủy', 'Năm Cúc', 'Sáu Tài', 'Bảy Hồng', 'Hai Mến', 'Út Tiến'];
+function wishOf(w) {
+  const h = w.home && buildings.includes(w.home) ? w.home : null;
+  if (hungry) return 'Đói bụng quá, làng mình cần thêm ruộng với bến cá!';
+  if (h && !near(h, 'water')) return 'Ước gì có lu nước gần nhà cho tiện.';
+  if (h && !near(h, 'market') && rankUnlocked('xom')) return 'Phải chi có cái chợ gần nhà đi mua bán.';
+  if (h && !near(h, 'temple') && rankUnlocked('ap')) return 'Mong làng mình có đình, có chùa để đi lễ.';
+  if (h && !near(h, 'school') && rankUnlocked('xom')) return 'Mấy đứa nhỏ cần trường học gần nhà.';
+  if (h) { let deco = 0; for (const o of buildings) { const d = GAME_DATA.build[o.kind].decor; if (d && Math.hypot(o.x - h.x, o.z - h.z) < 1.8) deco += d; } if (deco < 3) return 'Trồng thêm chuối, dừa quanh nhà cho mát nha.'; }
+  return ['Sống ở cồn vui ghê!', 'Chiều nay đi giăng câu nghen.', 'Mùa này cá linh về nhiều quá trời.', 'Nghe đàn kìm mà nhớ ngoại.', 'Bé husky dễ thương ghê!'][Math.floor(Math.random() * 5)];
+}
+function speak(w, text) {
+  const el = document.createElement('div'); el.className = 'ftx bub'; el.textContent = text; ftLayer.appendChild(el);
+  floaters.push({ el, p: V(w.x, w.y + 0.6, w.z), t: 0, follow: w, dur: 4 });
+}
+let chatT = 12;
+function updateChatter(dt) {
+  chatT -= dt; if (chatT > 0 || !npcs.length) return;
+  chatT = 14 + Math.random() * 14;
+  const w = npcs[Math.floor(Math.random() * npcs.length)]; if (w.rig.g.visible) speak(w, `${w.name}: ${wishOf(w)}`);
+}
+function pickVillager(e) {
+  setRay(e);
+  const hit = ray.intersectObjects([...npcs.map(n => n.rig.g), player.rig.g, dog.rig.g], true)[0]; if (!hit) return false;
+  let o = hit.object; while (o.parent && o.parent !== people) o = o.parent;
+  if (o === dog.rig.g) { speak(dog, 'Gâu gâu! 🐾'); sfx('bark'); return true; }
+  if (o === player.rig.g) { speak(player, 'Anh nè: hôm nay làm gì cho làng đây ta?'); return true; }
+  const w = npcs.find(n => n.rig.g === o); if (!w) return false;
+  speak(w, `${w.name}: ${wishOf(w)}`); return true;
+}
+
+// ================= GĐ2: procedural audio (no files) =================
+const AU = { ctx: null, master: null, on: true, waves: null, rainG: null, notes: [], musicT: 4 };
+try { AU.on = localStorage.getItem('conxanh-sound') !== 'off'; } catch (e) {}
+document.getElementById('snd').textContent = AU.on ? '🔊' : '🔇';
+document.getElementById('snd').onclick = () => {
+  AU.on = !AU.on; document.getElementById('snd').textContent = AU.on ? '🔊' : '🔇';
+  try { localStorage.setItem('conxanh-sound', AU.on ? 'on' : 'off'); } catch (e) {}
+  initAudio(); if (AU.master) AU.master.gain.setTargetAtTime(AU.on ? 0.8 : 0, AU.ctx.currentTime, 0.1);
+};
+function initAudio() {
+  if (AU.ctx) { AU.ctx.resume?.(); return; }
+  const C = window.AudioContext || window.webkitAudioContext; if (!C) return;
+  const ctx = AU.ctx = new C(), sr = ctx.sampleRate;
+  AU.master = ctx.createGain(); AU.master.gain.value = AU.on ? 0.8 : 0; AU.master.connect(ctx.destination);
+  const mkNoise = brown => { const b = ctx.createBuffer(1, sr * 3, sr), d = b.getChannelData(0); let l = 0; for (let i = 0; i < d.length; i++) { const w = Math.random() * 2 - 1; if (brown) { l = (l + 0.02 * w) / 1.02; d[i] = l * 3.5; } else d[i] = w; } return b; };
+  const loop = (buf, filt, f, q) => { const s = ctx.createBufferSource(); s.buffer = buf; s.loop = true; const fl = ctx.createBiquadFilter(); fl.type = filt; fl.frequency.value = f; fl.Q.value = q || 0.7; const g = ctx.createGain(); g.gain.value = 0; s.connect(fl); fl.connect(g); g.connect(AU.master); s.start(); return g; };
+  AU.waves = loop(mkNoise(true), 'lowpass', 600); AU.rainG = loop(mkNoise(false), 'highpass', 1400);
+  // đàn kìm: Karplus-Strong plucks on the ngũ cung scale (hò xự xang xê cống)
+  const scale = [261.6, 293.7, 349.2, 392.0, 440.0, 523.3, 587.3, 698.5];
+  AU.notes = scale.map(f => { const len = Math.floor(sr * 1.6), b = ctx.createBuffer(1, len, sr), d = b.getChannelData(0), n = Math.round(sr / f), r = new Float32Array(n).map(() => Math.random() * 2 - 1); for (let i = 0; i < len; i++) { const k = i % n; d[i] = r[k]; r[k] = 0.5 * (r[k] + r[(k + 1) % n]) * 0.994; } return b; });
+}
+function tone(type, f0, f1, dur, vol, at = 0, pan = 0) {
+  const ctx = AU.ctx; if (!ctx) return; const t = ctx.currentTime + at;
+  const o = ctx.createOscillator(), g = ctx.createGain(), p = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+  o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); if (p) { p.pan.value = pan; g.connect(p); p.connect(AU.master); } else g.connect(AU.master);
+  o.start(t); o.stop(t + dur + 0.05);
+}
+function pluck(i, at = 0, vol = 0.16, bend = 0) {
+  const ctx = AU.ctx; if (!ctx || !AU.notes[i]) return; const t = ctx.currentTime + at;
+  const s = ctx.createBufferSource(); s.buffer = AU.notes[i]; const g = ctx.createGain(); g.gain.value = vol;
+  if (bend) { s.playbackRate.setValueAtTime(1, t); s.playbackRate.linearRampToValueAtTime(1 + bend, t + 0.25); }
+  s.connect(g); g.connect(AU.master); s.start(t);
+}
+function sfx(k) {
+  if (!AU.ctx || !AU.on) return;
+  if (k === 'place') { pluck(0, 0, 0.18); pluck(3, 0.07, 0.12); }
+  if (k === 'coin') { tone('sine', 1320, 1320, 0.12, 0.08); tone('sine', 1760, 1760, 0.25, 0.08, 0.1); }
+  if (k === 'level') [0, 2, 4, 5, 7].forEach((n, i) => pluck(n, i * 0.12, 0.2));
+  if (k === 'bark') { tone('sawtooth', 500, 260, 0.12, 0.05); tone('sawtooth', 520, 270, 0.12, 0.05, 0.18); }
+}
+function audioTick(dt, et) {
+  if (!AU.ctx) return;
+  const t = AU.ctx.currentTime, night = isNight();
+  AU.waves.gain.setTargetAtTime(0.16 * (0.6 + 0.4 * Math.sin(et * 0.45)), t, 0.3);
+  AU.rainG.gain.setTargetAtTime(rainAmt * 0.12, t, 0.4);
+  if (!night && rainAmt < 0.3 && Math.random() < dt * 0.35) { const f = 2400 + Math.random() * 1600, pan = Math.random() * 2 - 1; for (let k = 0; k < 2 + (Math.random() * 3 | 0); k++) tone('sine', f, f * 1.35, 0.07, 0.03, k * 0.11, pan); }
+  if (night && Math.random() < dt * 2.5) { const pan = Math.random() * 2 - 1; for (let k = 0; k < 3; k++) tone('square', 4300, 4250, 0.025, 0.006, k * 0.05, pan); }
+  AU.musicT -= dt;
+  if (AU.musicT <= 0) {
+    AU.musicT = 7 + Math.random() * 8;
+    let n = 2 + (Math.random() * 3 | 0), at = 0;
+    for (let k = 0; k < 4 + (Math.random() * 4 | 0); k++) { n = clamp(n + [-2, -1, 1, 2][Math.random() * 4 | 0], 0, 7); pluck(n, at, 0.11, Math.random() < 0.3 ? 0.06 : 0); at += [0.35, 0.5, 0.7][Math.random() * 3 | 0]; }
+  }
+}
 
 setCat('nha'); setTool('view'); renderTasks();
-window.__game.trader = trader; window.__game.save = () => saveGame();
+window.__game.trader = trader; window.__game.save = () => saveGame(); window.__game.clock = clock2; window.__game.rain = v => { rainLeft = v; }; window.__game.rainbow = () => { rainbowT = 30; };
 
 // ================= brushes =================
 let terrainDirty = true;
@@ -1712,7 +2082,7 @@ document.getElementById('undo').onclick = () => {
   const a = history.pop(); if (!a) return;
   H.set(a.H); base.set(a.base); paint.set(a.paint); carved.set(a.carved); blocked.set(a.blocked); wcol.set(a.wa);
   a.added.forEach(o => objects.remove(o)); a.removed.forEach(o => objects.add(o));
-  if (a.econ) { const { type, obj, cost } = a.econ; if (type === 'buy') { unregister(obj); pay(cost, 1); } else { buildings.push(obj.userData.bld); pay(cost, -1, 0.5); } }
+  if (a.econ) { const { type, obj, cost, reg } = a.econ; if (type === 'buy') { unregister(obj); pay(cost, 1); if (reg) buildings.push(reg.userData.bld); } else { buildings.push(obj.userData.bld); pay(cost, -1, 0.5); } }
   for (let i = 0; i < N; i++) colorAt(i);
   terrainDirty = true;
 };
@@ -1759,7 +2129,8 @@ function endPointer(e) {
   downAt = null;
   if (moved > 10) return;
   if (tool === 'erase') return eraseAt(e);
-  if (tool === 'view') return showInfo(e);
+  if (tool === 'view' || tool === 'walk') { if (pickVillager(e)) return; if (tool === 'view') return showInfo(e); return; }
+  if (tool === 'upgrade') return upgradeAt(e);
   if (GHOST_KINDS.includes(tool)) ghostAt(e);
   else if (PLACE_TOOLS.includes(tool)) placeAt(e);
 }
@@ -1774,7 +2145,7 @@ function withSeed(seed, fn) {
 }
 const newSeed = () => Math.floor(Math.random() * 2e9);
 function makeObj(kind, seed) {
-  const CUSTOM = { house: makeHouse, boat: makeBoat, banana: makeBanana, nipa: makeNipa, lu: makeLu, field: makeField, fishery: makeFishery, bamboo: makeBamboo, candy: makeCandy, cho: makeCho, dinh: makeDinh };
+  const CUSTOM = { house2: makeTileHouse, chua: makeChua, school: makeSchool, house: makeHouse, boat: makeBoat, banana: makeBanana, nipa: makeNipa, lu: makeLu, field: makeField, fishery: makeFishery, bamboo: makeBamboo, candy: makeCandy, cho: makeCho, dinh: makeDinh };
   const o = withSeed(seed, () => {
     if (CUSTOM[kind]) return CUSTOM[kind]();
     if (assetsReady && CATALOG[kind]) return makeAsset(kind);
@@ -1798,7 +2169,7 @@ function flattenAt(x, z, r, y) {
   forEachNear(x, z, r + STEP * 2, i => colorAt(i));
   terrainDirty = true;
 }
-const FLAT = { house: 0.75, field: 1.05, candy: 0.75, cho: 1.1, dinh: 1.3 };
+const FLAT = { house2: 0.85, chua: 1.2, school: 1.2, house: 0.75, field: 1.05, candy: 0.75, cho: 1.1, dinh: 1.3 };
 function isWater(x, z) { const i = idxAt(x, z); if (i < 0) return true; return H[i] < 0.03 || (carved[i] && H[i] < base[i] - 0.03); }
 function shoreDir(x, z) {
   let best = null;
@@ -1836,10 +2207,25 @@ function placeAtPoint(p, kind, seed = newSeed(), ry = null) {
   if (def) { pay(def.cost); action.econ = { type: 'buy', obj: o, cost: def.cost }; floatText('-' + costText(def.cost), p.x, p.y + 0.8, p.z, '#ffd0c0'); }
   action.added.push(o); commitAction();
   terrainDirty = true;
-  checkTasks(); saveSoon();
+  checkTasks(); saveSoon(); sfx('place');
   return o;
 }
 function placeAt(e) { const h = pick(e); if (h) placeAtPoint(h.point, tool); }
+function upgradeAt(e) {
+  setRay(e);
+  const hit = ray.intersectObjects(objects.children, true)[0]; if (!hit) return;
+  let o = hit.object; while (o.parent !== objects) o = o.parent;
+  if (o.userData.kind !== 'house') { flash('Chạm vào một nhà lá để lên nhà ngói nha'); return; }
+  const def = GAME_DATA.build.upgrade;
+  if (!rankUnlocked(def.unlock)) { flash('🔒 Cần lên Xóm mới xây nhà ngói được'); return; }
+  if (!canAfford(def.cost)) { flash(`Chưa đủ ${costText(def.cost)}`); return; }
+  beginAction();
+  const { x, y, z } = o.position, ry = o.rotation.y;
+  objects.remove(o); unregister(o); action.removed.push(o);
+  const n = addObject('house2', x, z, y + 0.02); n.rotation.y = ry;
+  pay(def.cost); action.econ = { type: 'buy', obj: n, cost: def.cost, reg: o }; action.added.push(n); commitAction();
+  floatText('⬆️ Nhà ngói! -' + costText(def.cost), x, y + 1.2, z, '#fff7c0'); sfx('level'); saveSoon(); checkTasks();
+}
 function eraseAt(e) {
   setRay(e);
   const hit = ray.intersectObjects(objects.children, true)[0]; if (!hit) return;
@@ -1923,6 +2309,7 @@ function animateBuildings(dt, et) {
   for (const b of buildings) {
     const u = b.obj.userData;
     if (u.rice) { const g = b.prog, s = 0.35 + g * 0.75; u.rice.scale.set(1, s, 1); u.rice.material.color.setHSL(lerp(0.27, 0.13, sm(0.6, 1, g)), 0.6, lerp(0.42, 0.55, g)); }
+    if (u.flag) u.flag.rotation.y = Math.sin(et * 3 + b.x) * 0.25;
     if (u.lever) { const w = b.workers > 0 ? 1 : 0; u.lever.rotation.x = w * (Math.sin(et * 0.8 + b.x) * 0.35 + 0.05); }
     if (u.smoke) for (const s of u.smoke) {
       const on = b.workers > 0 && canAfford(GAME_DATA.build.candy.in);
@@ -1950,6 +2337,8 @@ renderer.setAnimationLoop(() => {
   sea.position.y = Math.sin(et * 0.9) * 0.015;
   foam.position.y = 0.012 + Math.sin(et * 0.9) * 0.015;
   foamMat.opacity = 0.55 + Math.sin(et * 1.6) * 0.25;
+  updateDay(dt);
+  updateWeather(dt);
   objects.children.forEach(o => {
     const u = o.userData;
     if (u.grow !== undefined && u.grow < 1) {
@@ -1970,9 +2359,12 @@ renderer.setAnimationLoop(() => {
     }
     ffGeo.attributes.position.needsUpdate = true;
   }
-  simAcc += dt; if (simAcc >= 0.25) { simTick(simAcc); simAcc = 0; syncVillagers(); }
+  simAcc += dt; if (simAcc >= 0.25) { simTick(simAcc); simAcc = 0; syncVillagers(); syncAnimals(); }
   animateBuildings(dt, et);
   updateTrader(dt);
+  updateAnimals(dt, et);
+  updateChatter(dt);
+  audioTick(dt, et);
   positionGhostUI();
   updateFloaters(dt);
   updatePeople(dt);

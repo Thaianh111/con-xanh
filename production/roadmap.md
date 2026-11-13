@@ -13,12 +13,12 @@ Chốt ngày 13/11/2026 với anh Võ Thái Anh. Hướng game: **quản lý là
 **Qua GĐ khi:** 5 người chơi thử, đa số chơi liền 15 phút không hỏi "giờ làm gì". Gom ý kiến bằng `/playtest-report`.
 
 ## GĐ 2 – Làng có hồn (web, ~2–3 tuần)
-- [ ] Ngày đêm tự chạy; tối dân về nhà, đèn lồng sáng
-- [ ] Mùa nước nổi / mùa khô, mưa, cầu vồng
-- [ ] Gà vịt, trâu; husky biết ngồi chờ ở nhà
-- [ ] Dân có tên và mong muốn riêng
-- [ ] Âm thanh: sóng, chim, dế, đàn kìm
-- [ ] Công trình theo cấp: nhà lá → nhà ngói, chùa, trường, cầu ván lớn
+- [x] Ngày đêm tự chạy; tối dân về nhà, đèn lồng sáng
+- [x] Mùa nước nổi / mùa khô, mưa, cầu vồng
+- [x] Gà vịt, trâu; husky biết ngồi chờ ở nhà
+- [x] Dân có tên và mong muốn riêng
+- [x] Âm thanh: sóng, chim, dế, đàn kìm
+- [x] Công trình theo cấp: nhà lá → nhà ngói, chùa, trường, cầu ván lớn
 
 **Qua GĐ khi:** chơi tới Thị trấn vẫn còn muốn chơi tiếp.
 
